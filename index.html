@@ -91,13 +91,10 @@
         .btn-lifeline { flex: 1; background: linear-gradient(to bottom, #d4af37, #8a6327); border: 1px solid var(--gold-light); color: #fff; padding: 10px 5px; border-radius: 10px; font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; text-align: center; }
         .btn-lifeline:disabled { background: #555; border-color: #444; color: #888; box-shadow: none; text-shadow: none;}
 
-        /* === SISTEM MODAL (POPUP) === */
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: flex-start; z-index: 50; opacity: 1; transition: opacity 0.3s; padding: 40px 0; overflow-y: auto; }
-        
+        /* MODAL POP-UP */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: flex-start; z-index: 50; padding: 40px 0; overflow-y: auto; }
         .modal-box { width: 90%; max-width: 350px; background: #150f24; border: 3px solid var(--gold-main); border-radius: 15px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(255, 215, 0, 0.1); position: relative; margin: auto; }
-        
         .modal-header { text-align: center; margin: -20px auto 15px auto; width: 85%; border-radius: 10px; padding: 12px; font-size: 24px; font-weight: 900; text-transform: uppercase; box-shadow: 0 5px 10px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; gap: 10px; }
-
         .header-win { background: linear-gradient(to bottom, #11998e, #38ef7d); border: 3px solid #fff; color: #fff; text-shadow: 1px 2px 4px rgba(0,0,0,0.8); }
         .header-lose { background: linear-gradient(to bottom, #7a0000, #ff0000); border: 3px solid #ffea70; color: #ffffff; font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 2px; text-shadow: 2px 2px 0px #000, -1px -1px 0px #000, 0 0 15px #ffea70; }
         .header-default { background-color: #111; border: 2px solid var(--gold-main); color: var(--gold-light); }
@@ -160,13 +157,14 @@
             </button>
         </div>
 
+        <!-- NAVIGASI BAWAH: SESUAI REQUEST (✈️ KOLEKSI HADIAH | 🎁 TIKET HADIAH | ⚙️ PENGATURAN) -->
         <div class="bottom-nav">
             <div class="nav-btn" onclick="UI.openModal('modal-collection')">
-                <div class="nav-icon">📖</div>
-                <div class="nav-text">Koleksi</div>
+                <div class="nav-icon">✈️</div>
+                <div class="nav-text">Koleksi<br>Hadiah</div>
             </div>
             <div class="nav-btn" onclick="UI.openModal('modal-shop')">
-                <div class="nav-icon">🕋</div>
+                <div class="nav-icon">🎁</div>
                 <div class="nav-text">Tiket<br>Hadiah</div>
             </div>
             <div class="nav-btn" onclick="UI.openModal('modal-settings')">
@@ -225,7 +223,7 @@
                 <div id="shop-desc" style="text-align: center; margin-bottom: 10px; color: var(--gold-light); font-size: 14px;"></div>
                 <div class="shop-item">
                     <div style="font-size: 60px;">🎁</div>
-                    <div class="ticket-cost" id="shop-ticket-cost">0 TIKET</div>
+                    <div class="ticket-cost" id="shop-ticket-cost">1 TIKET</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -367,7 +365,7 @@ const Game = {
         
         let pAmt = this.prizeLadder[this.questionIndex] || (this.prizeLadder[this.prizeLadder.length-1] * 2);
         document.getElementById('ui-prize-box').innerText = "Rp " + pAmt.toLocaleString('id-ID');
-        
+
         const imgBox = document.getElementById('ui-q-img-box');
         if (this.currentQ.image) { document.getElementById('ui-q-img').src = this.currentQ.image; imgBox.style.display = 'block'; } 
         else { imgBox.style.display = 'none'; }
@@ -557,35 +555,19 @@ const Game = {
         AudioSys.click();
         if (this.tickets < 1) { alert("Tiket Anda 0. Main kuis untuk mendapatkan tiket!"); return; }
         
-        // Urutan harga dari yang termurah ke yang termahal (Berdasarkan ID Item)
-        // 6: Meja, 11: Mesin Kopi, 0: Sepeda, 5: Lemari, 10: Mesin Cuci, 8: AC, 9: Kulkas, 7: Sofa, 4: Tempat Tidur, 1: Motor, 2: Mobil, 3: Pesawat
         const prizeOrder = [6, 11, 0, 5, 10, 8, 9, 7, 4, 1, 2, 3]; 
         let unlockedItem = null;
-        
-        // Cari hadiah pertama yang belum didapatkan berdasarkan urutan harga
         for (let id of prizeOrder) {
             let item = dbCollection.find(i => i.id === id);
-            if (item && !item.unlocked) {
-                unlockedItem = item;
-                break;
-            }
+            if (item && !item.unlocked) { unlockedItem = item; break; }
         }
         
-        if (!unlockedItem) { 
-            alert("Subhanallah! Anda sudah mengoleksi semua hadiah."); 
-            UI.closeModal(); 
-            return; 
-        }
+        if (!unlockedItem) { alert("Subhanallah! Anda sudah mengoleksi semua hadiah."); UI.closeModal(); return; }
         
-        // Tarik 1 tiket
-        this.tickets -= 1; 
-        this.init(); 
-        unlockedItem.unlocked = true; 
-        
+        this.tickets -= 1; this.init(); unlockedItem.unlocked = true; 
         AudioSys.correct();
         alert(`Alhamdulillah! Anda mendapatkan: ${unlockedItem.icon} ${unlockedItem.name}`);
-        UI.openModal('modal-collection'); 
-        UI.switchTab(unlockedItem.cat);
+        UI.openModal('modal-collection'); UI.switchTab(unlockedItem.cat);
     }
 };
 
