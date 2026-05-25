@@ -91,10 +91,13 @@
         .btn-lifeline { flex: 1; background: linear-gradient(to bottom, #d4af37, #8a6327); border: 1px solid var(--gold-light); color: #fff; padding: 10px 5px; border-radius: 10px; font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; text-align: center; }
         .btn-lifeline:disabled { background: #555; border-color: #444; color: #888; box-shadow: none; text-shadow: none;}
 
-        /* MODAL POP-UP */
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 50; }
-        .modal-box { width: 90%; max-width: 350px; background: #150f24; border: 3px solid var(--gold-main); border-radius: 15px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(255, 215, 0, 0.1); position: relative; }
+        /* === SISTEM MODAL (POPUP) === */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: flex-start; z-index: 50; opacity: 1; transition: opacity 0.3s; padding: 40px 0; overflow-y: auto; }
+        
+        .modal-box { width: 90%; max-width: 350px; background: #150f24; border: 3px solid var(--gold-main); border-radius: 15px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(255, 215, 0, 0.1); position: relative; margin: auto; }
+        
         .modal-header { text-align: center; margin: -20px auto 15px auto; width: 85%; border-radius: 10px; padding: 12px; font-size: 24px; font-weight: 900; text-transform: uppercase; box-shadow: 0 5px 10px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; gap: 10px; }
+
         .header-win { background: linear-gradient(to bottom, #11998e, #38ef7d); border: 3px solid #fff; color: #fff; text-shadow: 1px 2px 4px rgba(0,0,0,0.8); }
         .header-lose { background: linear-gradient(to bottom, #7a0000, #ff0000); border: 3px solid #ffea70; color: #ffffff; font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 2px; text-shadow: 2px 2px 0px #000, -1px -1px 0px #000, 0 0 15px #ffea70; }
         .header-default { background-color: #111; border: 2px solid var(--gold-main); color: var(--gold-light); }
@@ -176,7 +179,7 @@
     <!-- LAYAR: KUIS -->
     <div id="view-quiz" class="flex-col z-10 hidden">
         <div class="quiz-header">
-            <div class="prize-box gold-text"><span id="ui-prize">10.000</span> ILMU</div>
+            <div class="prize-box gold-text" id="ui-prize-box">Rp 100.000</div>
             <div class="timer-circle gold-text" id="ui-timer">30</div>
         </div>
 
@@ -233,14 +236,12 @@
 
         <!-- KOLEKSI -->
         <div id="modal-collection" class="modal-box hidden">
-            <div style="text-align: center; margin-top: -15px; margin-bottom: 10px;">
-                <span class="gold-text" style="font-size: 20px; font-weight: bold; background: #000; padding: 5px 20px; border-radius: 10px; border: 2px solid var(--gold-main);">KOLEKSI HADIAH</span>
-            </div>
+            <div class="modal-header header-default">KOLEKSI HADIAH</div>
             <div class="modal-content">
                 <div class="tabs">
                     <div class="tab-btn active" onclick="UI.switchTab(0)">Kendaraan</div>
-                    <div class="tab-btn" onclick="UI.switchTab(1)">Pakaian</div>
-                    <div class="tab-btn" onclick="UI.switchTab(2)">Alat Tulis</div>
+                    <div class="tab-btn" onclick="UI.switchTab(1)">Furniture</div>
+                    <div class="tab-btn" onclick="UI.switchTab(2)">Elektronik</div>
                 </div>
                 <div class="collection-grid" id="col-grid"></div>
             </div>
@@ -276,14 +277,14 @@ const dbCollection = [
     { id: 1, cat: 0, icon: "🏍️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEia96KeBdZJ5HXo4lt2w8414vMRcZuM4ZicVtkUCUOiykOhZkT-8c0sTbErpI6YsmfMSRlsHQda6iImBOaaSOB4vZ-_LBWHrqBILPu5wkVqKah04RAGC-0yWjE14EZDWkJzF-4ejmt5EDI3sBgbw8pxbsOgCrk986li0QBCGm-NJdyM8iNm6ORmMRcrEUY/s1600/motor.webp", name: "Motor", unlocked: false },
     { id: 2, cat: 0, icon: "🚗", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFcIE70528fb5nIK8O6J9LU7KVnCmPVoK7ONv7tn2fFkre9EK5cfEDdx6-LJxqKyS9iSZTT5GXsfsXXXJHvarQRP7_YkDEMMUDsGmrfFfeOLChwJm5PJuyvIs_pIAiiZF-cnP7uA-JR-7379a2qCEMhwAnd4hz897i1Q8LIZdZML7d31D44EEoFFUvwgk/s1600/mobil.webp", name: "Mobil", unlocked: false },
     { id: 3, cat: 0, icon: "✈️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgNbt1BjTtKSHDVNKosJdqJk0tw1UugmsdlwXh_18VEApMytdDIbKgmqp1wmMY-FY1m0SPJYuFBAQytdr-DQFGOPFG3gA4Yplal3iXSc5ovwdiy4lSLqfbiedLBexZLFeRpnPSIn-kAabak_hgn-K635M-NhRmRGLCoK9BViX8ujJwXz6Ky3p6wZIlmhv0/s1600/pesawat.webp", name: "Pesawat", unlocked: false },
-    { id: 4, cat: 1, icon: "👔", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPkvlwtvwBLqgiMCdjWbyWirXxfgUTuhDrj4q3J6s1FPqn6BIAtmy2H5vc7PidIhZaV0FT-f12q6FHwzGMl7p8mf8FILU7fNhNUhDYKa0rcXbWbkie4Sepmh99y_jho2zIqJx5psTIUiE8O8_6ry0PiBgYspULVD-yYM318iscL38NmdibVft35zXsB0Q/s1600/baju.webp", name: "Baju", unlocked: false },
-    { id: 5, cat: 1, icon: "👕", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhhNNtTiZCqUZ5hvijZwEAmtUBDiE3Gtgmqj0wtAczwo5pfFHm13VFYXmEKroW428hqcPhV5qn9Qp0_Z7L_eIQMak_RSgoEmXDVtc9IJ3PNz1nlercXubAhf5FeSFYODMuVEnxqRWb7pfFRov1eOafmuRPHmhDQqNTDXDeTAkPDDiTE1aMRydyKLkwAF-E/s1600/kaos.webp", name: "Kaos", unlocked: false },
-    { id: 6, cat: 1, icon: "🩴", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg8LNybgbL7iJSyDYM1G-KtrwzsHBPG6vX2FfHzklkeRg9lhDT6o5EAaj8w_6qaxgnmx_6CtnBVnAYwsAhPhlBcWpw4IHwZBNyG5y6PgRyeCqbXYXF6RcYCdymNvzpWK8fYfWIQH0pEjQuwKQEiPqOvY7o0M5uIe0FZvZkC-coOjsINcz0aChwPthgXlqU/s1600/sandal.webp", name: "Sandal", unlocked: false },
-    { id: 7, cat: 1, icon: "👞", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPH76bZJD9OhVdXxeNkWoipxpVqQcUCjCzpvW_TkU7Drk6nnR-T3fQy3E0rE0R2Hh8fo2skGhGUErwK25Nc2ExPGsM8IjRQkJE3cUcJLo6mBBAn8y0389_ArBAYqBUtlxy1_VzKEC73AkM9-I0bPkHO3qsSW1J4ReMC8Zn_2MKv-YY3BFLi3TrauH0pSI/s1600/sepatu.webp", name: "Sepatu", unlocked: false },
-    { id: 8, cat: 2, icon: "📘", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj-6DObW_W7zFdiKEFyGydIfQgC71zdGeqwJ6EjT9Oz7MSfCTk4xXlBIZmzJUxMNLDEU1knOveBx42Evr6u50aBFE-7uFpWNCncsqdCVHSklR_lVnXQIJvyEqTDZ5y1iCNnIKXicegjjPEE1RVaIh012VYq8uhQiZf087Vb-xetMC1DnuTIBp5H7WGICbs/s1600/buku.webp", name: "Buku", unlocked: false },
-    { id: 9, cat: 2, icon: "💻", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh-05e4AmJ4PhtSOYyiWDPIUOHxOnf9UMCll62PMRLIcafT9xuGN0sbngPQands1s6qUVd6gWTSQyzDOd61InCPvv8uBRT85PX-RwaZpD-R0kEoiX-QIu8m476b4cPnJcg0D5IqpxL8cMyMXlAjLorxphEJDVJk1FA21y0VcumxA_2wsqi5CNUKC12OVUQ/s1600/laptop.webp", name: "Laptop", unlocked: false },
-    { id: 10, cat: 2, icon: "🖋️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEiiS0rlukY2CTEMgSzE9WER3-6qpfUx2vCJzrEiH1YluNkLJqY6JOtU0l0elBii0tfiqiAfG-kjK1NBQNyUUy0s6DmpnyRW43ILOboliz7uhUKDgSZehokCn1wH0lV8GqA06WHM-p09hTFfAmZmQY3fn9bFBQt_39EHUZ05Sz_7Xs8Dy2RH9jSuSgNG8/s1600/pena.webp", name: "Pena", unlocked: false },
-    { id: 11, cat: 2, icon: "✏️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvHWiAqKrPGeOdy_7Ph2lCxPkcVCNtbLIXU92SC77ErdRnP_SoMyP2pY7TferFSHmkaFwhUgwCIohh7lIFJH6eumj86-OLKogq_LSYw-1Gn_8E5XUSQmiF7sFla5BDwCjnts6dwXT10esEomXlVY8xd1wpxlqwG_mMkoapcavC8G0_ywUu3g6BuTuKnUQ/s1600/pensil.webp", name: "Pensil", unlocked: false }
+    { id: 4, cat: 1, icon: "🛏️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpu96uit0l4NdwkPA1AsnQTAvmgmJ2ai-x2WHz6B8QABhDj4W4w_OsjT6ecxD_v37z0_l7C4k49wZ6In3RDk7FeGb0l5_aSQPwmeI-WxJRPZov_nv65yAnl9e_URmeKAdSGOBes-cY6S-wJtqvyhIhj8g3qZvhckaHUu1GTrwR1Qxx_9Q64T41rYwx58Q/w200-h200/bed.webp", name: "Tempat Tidur", unlocked: false },
+    { id: 5, cat: 1, icon: "🚪", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiYdx0sosaVfIXigSfayhwBVNMY8rdDW7OE7DzF1I0hXWbffUHDfTRFax3yhrtcDvpZjH6TmW1M0Ry7duGuSolF-jqf_sREHWkHpKxKwzTYXV3i81ilpNTLSt8mFCEcw9_q_9krkB9F5p_SZNcXR0Upi0qfMwd3lHU0yqIdTX2GKHXmFtPpne29x7l34AI/w200-h200/lemari.webp", name: "Lemari", unlocked: false },
+    { id: 6, cat: 1, icon: "🪑", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcIWiYF7AuBm6blVvuMf0q9JftAxo2z1YW1GjgM0rvdLZ3FbVH8VtpnB_EM-8lCCL63rSXD7fzOoeSUh9Mxz3npGP-dAtHwCbZJ8reuFapARHr2YlrEm5wCJU2mJYtjXSITI9lucZRhU9EGgBqLWjm0svjmAXWQthPkNwpDeF_TMjAIYJbo3P-rwShfLI/w200-h200/meja.webp", name: "Meja", unlocked: false },
+    { id: 7, cat: 1, icon: "🛋️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjUVbBiQSVMJk0G23eUiX8uiBRduY1wK-wHzVKkdlBBps1AGWYwT4nvuPU5yjEjp0S774zhrH1uaLJNmCgNJNTumImScKMGO8FIa7z6SHu4PQoMCkF3r5Evht4-333Chgu9Dqt7UrWj56wK8sPnv2QFd5hEauiZO6iaYPWnNty2XoFXJYlD3LO_mbKlv5Q/w200-h200/Sofa.webp", name: "Sofa", unlocked: false },
+    { id: 8, cat: 2, icon: "❄️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhLMaN7YdOEvH2tuYQzoTeyJblRpKcj2GMfDWTXkShyphenhyphenJubZ1MFFp9SbWUQuaww1tDxVasBff1LR0U4Bd9WUp4kqDxJ3f8Fv2Vp5HNdqNka6c5MF2THr0Zg4wNxGY5F_gGI1p-6Zsp4r-zbXXlVh_2X-GYPFv548T86j5PhVGb8mm8_OkH6f-4nPFmP5VPw/w200-h200/AC.webp", name: "AC", unlocked: false },
+    { id: 9, cat: 2, icon: "🧊", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgd5ZCuJ7J8h6JofF5aLCKvW8koFr-6QUI3912nyG8iXSR0xzCP-GhvX3RwSs1YKYin0nosrAsCFLy5icDZbLR4NizDruh1DHPnhYhGlaNIAsy-urfPDhlRZbN9_OOOQ93qjgxzAbHM9YIZq7byxRstyAH4APP8yEzCdSVkajOReFLigCuPFwZSlDFnxDQ/w200-h200/Kulkas.webp", name: "Kulkas", unlocked: false },
+    { id: 10, cat: 2, icon: "🧺", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkKM9WV6pCAVdQlGQfjcKUpPfZ0u5HHuYDrLiwbYpqtyK_D70KTcbhxP4KrxxmvG-OxsZxyIskdaHhqwXJ3KKbHyUFlihYWn-Hv2uaXylNF-vbdr0wLiGJVVKTA83JdPYGioBqC_28_bggTJAKKuoL5_b_HZ-Y5GiiHP89KF9K1Esy-w7AcT5zZbsyCZs/w200-h200/mesin%20cuci.webp", name: "Mesin Cuci", unlocked: false },
+    { id: 11, cat: 2, icon: "☕", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjHBwIsQ5frXJWYQPJffZYWv2V2xx4deufXCynoSK3xQUdT2zc5YHfuJgin7vPnsPqFDmwdc-mYKRSAex3QQsX4vasyopYIsN5VdYgZ2HANIS4So5V-PohZWJgYajp7eaExeWSsSJ6N0wKV-xPlV_9K6R9I0c8drqapX2BCCur1RHpSDcwTYcCJw3-bBaA/w200-h200/mesin%20kopi.webp", name: "Mesin Kopi", unlocked: false }
 ];
 
 const AudioSys = {
@@ -335,8 +336,9 @@ const AudioSys = {
 };
 
 const Game = {
-    level: 1, tickets: 1, currentPrize: 10000, questionIndex: 0, currentQ: null, timeLeft: 30, timerInt: null, typeInt: null,
+    level: 1, tickets: 1, questionIndex: 0, currentQ: null, timeLeft: 30, timerInt: null, typeInt: null,
     lifelineTimeUsed: false, lifeline5050Used: false, lifelineSwapUsed: false, jumbleData: null,
+    prizeLadder: [100000, 300000, 1000000, 5000000, 10000000, 50000000, 100000000, 250000000, 500000000, 1000000000],
 
     init() {
         document.getElementById('ui-tickets').innerText = this.tickets;
@@ -350,7 +352,6 @@ const Game = {
         this.level = 1; this.resetLevelState();
     },
     resetLevelState() {
-        this.currentPrize = 10000 * this.level;
         this.lifelineTimeUsed = false; this.lifeline5050Used = false; this.lifelineSwapUsed = false;
         document.getElementById('life-time').disabled = false;
         document.getElementById('life-5050').disabled = false;
@@ -364,7 +365,9 @@ const Game = {
         this.currentQ = this.questions[this.questionIndex];
         if(!this.currentQ) return;
         
-        document.getElementById('ui-prize').innerText = this.currentPrize.toLocaleString('id-ID');
+        let pAmt = this.prizeLadder[this.questionIndex] || (this.prizeLadder[this.prizeLadder.length-1] * 2);
+        document.getElementById('ui-prize-box').innerText = "Rp " + pAmt.toLocaleString('id-ID');
+        
         const imgBox = document.getElementById('ui-q-img-box');
         if (this.currentQ.image) { document.getElementById('ui-q-img').src = this.currentQ.image; imgBox.style.display = 'block'; } 
         else { imgBox.style.display = 'none'; }
@@ -490,7 +493,6 @@ const Game = {
         }
     },
     correctRoutine() {
-        this.currentPrize += 15000 * this.level;
         this.questionIndex++;
         if (this.questionIndex < this.questions.length) { this.loadQuestion(); } 
         else { this.winLevel(); }
@@ -554,22 +556,36 @@ const Game = {
     gacha() {
         AudioSys.click();
         if (this.tickets < 1) { alert("Tiket Anda 0. Main kuis untuk mendapatkan tiket!"); return; }
-        let drawCount = this.tickets; let drawnItems = [];
-        for (let i = 0; i < drawCount; i++) {
-            const lockedItems = dbCollection.filter(item => !item.unlocked);
-            if (lockedItems.length === 0) break; 
-            const randIndex = Math.floor(Math.random() * lockedItems.length);
-            const unlockedItem = lockedItems[randIndex];
-            unlockedItem.unlocked = true; drawnItems.push(unlockedItem);
+        
+        // Urutan harga dari yang termurah ke yang termahal (Berdasarkan ID Item)
+        // 6: Meja, 11: Mesin Kopi, 0: Sepeda, 5: Lemari, 10: Mesin Cuci, 8: AC, 9: Kulkas, 7: Sofa, 4: Tempat Tidur, 1: Motor, 2: Mobil, 3: Pesawat
+        const prizeOrder = [6, 11, 0, 5, 10, 8, 9, 7, 4, 1, 2, 3]; 
+        let unlockedItem = null;
+        
+        // Cari hadiah pertama yang belum didapatkan berdasarkan urutan harga
+        for (let id of prizeOrder) {
+            let item = dbCollection.find(i => i.id === id);
+            if (item && !item.unlocked) {
+                unlockedItem = item;
+                break;
+            }
         }
-        this.tickets = 0; this.init(); 
-        if (drawnItems.length > 0) {
-            AudioSys.correct();
-            let msg = `Alhamdulillah! Anda mendapatkan ${drawnItems.length} hadiah:\n`;
-            drawnItems.forEach(item => { msg += `- ${item.icon} ${item.name}\n`; });
-            alert(msg);
-            UI.openModal('modal-collection'); UI.switchTab(drawnItems[0].cat);
-        } else { alert("Subhanallah! Anda sudah mengoleksi semua hadiah."); UI.closeModal(); }
+        
+        if (!unlockedItem) { 
+            alert("Subhanallah! Anda sudah mengoleksi semua hadiah."); 
+            UI.closeModal(); 
+            return; 
+        }
+        
+        // Tarik 1 tiket
+        this.tickets -= 1; 
+        this.init(); 
+        unlockedItem.unlocked = true; 
+        
+        AudioSys.correct();
+        alert(`Alhamdulillah! Anda mendapatkan: ${unlockedItem.icon} ${unlockedItem.name}`);
+        UI.openModal('modal-collection'); 
+        UI.switchTab(unlockedItem.cat);
     }
 };
 
@@ -580,8 +596,8 @@ const UI = {
         document.querySelectorAll('.modal-box').forEach(b => b.classList.add('hidden'));
         document.getElementById(modalId).classList.remove('hidden');
         if (modalId === 'modal-shop') {
-            document.getElementById('shop-ticket-cost').innerText = Game.tickets + " TIKET";
-            document.getElementById('shop-desc').innerText = Game.tickets > 0 ? `Tukarkan ${Game.tickets} Tiket untuk langsung mendapatkan ${Game.tickets} hadiah.` : `Anda belum memiliki tiket.`;
+            document.getElementById('shop-ticket-cost').innerText = "1 TIKET";
+            document.getElementById('shop-desc').innerText = Game.tickets > 0 ? `Tukarkan 1 Tiket untuk mendapatkan hadiah (sesuai urutan harga termurah).\nTiket Anda saat ini: ${Game.tickets}` : `Anda belum memiliki tiket.`;
         }
         if (modalId === 'modal-collection') this.switchTab(0);
     },
