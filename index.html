@@ -242,6 +242,8 @@
                     <div class="tab-btn" onclick="UI.switchTab(2)">Elektronik</div>
                 </div>
                 <div class="collection-grid" id="col-grid"></div>
+                <!-- Pesan Ucapan Selamat -->
+                <div id="collection-msg" style="text-align: center; color: var(--gold-light); font-weight: bold; margin-top: 15px; font-size: 14px; min-height: 20px;"></div>
             </div>
             <div class="modal-footer"><button class="btn-modal" onclick="UI.closeModal()">TUTUP</button></div>
         </div>
@@ -260,24 +262,18 @@
 </div>
 
 <script>
+// --- BANK SOAL LEVEL 1 (20 Soal) ---
 const dbQuestionsLevel1 = [
-    // 2 Pilihan Ganda Bergambar
     { type: 'multiple', image: 'https://picsum.photos/201', q: "Perhatikan gambar anak yang sedang membantu ibunya ini. Menurut Kitab Ngudi Susilo, jika ibu bapak sedang repot, kita harus...", options: ["A. Pura-pura tidur", "B. Rajin membantu", "C. Pergi bermain", "D. Meminta uang"], a: 1 },
     { type: 'multiple', image: 'https://picsum.photos/202', q: "Gambar ini menunjukkan waktu fajar. Jika kenthong subuh sudah berbunyi, hal pertama yang harus kita lakukan adalah...", options: ["A. Melanjutkan tidur", "B. Menonton TV", "C. Segera bangun dan mandi", "D. Menunggu dibangunkan"], a: 2 },
-    
-    // 3 Jumble (Meneruskan Syair)
     { type: 'jumble', q: "Susun huruf berikut untuk meneruskan syair: Iki syi'ir kanggo bocah lanang wadon, Nebihake tingkah laku ingkang... (O-W-A-N)", a: "AWON" },
     { type: 'jumble', q: "Susun huruf berikut untuk meneruskan syair: Bocah iku wiwit umur pitung tahun, Kudu ajar thotho keben ora... (T-U-N-E-G)", a: "GETUN" },
     { type: 'jumble', q: "Susun huruf berikut untuk meneruskan syair: Sarto nerangake budi kang prayugo, Kanggo dalan podho mlebu ing... (O-S-U-A-R-W-G)", a: "SUWARGO" },
-
-    // 5 Benar dan Salah (Boolean)
     { type: 'boolean', q: "Anak berumur tujuh tahun sudah harus diajari aturan dan tata krama yang santun.", a: true },
     { type: 'boolean', q: "Jika kita diperintah oleh orang tua, kita boleh menundanya sampai permainan selesai.", a: false },
     { type: 'boolean', q: "Menurut kitab Ngudi Susilo, kita harus menyayangi ibu yang merawat sejak kecil dan bapak yang menyayangi kita.", a: true },
     { type: 'boolean', q: "Berbicara kepada orang tua boleh menggunakan nada keras asalkan kita sedang marah.", a: false },
     { type: 'boolean', q: "Selesai sholat subuh, kita dianjurkan untuk mengerjakan tugas seperti menyapu rumah.", a: true },
-
-    // 10 Pilihan Ganda Biasa
     { type: 'multiple', q: "Sikap yang tepat kepada orang yang lebih tua meskipun bukan keluarga adalah...", options: ["A. Bersikap rendah hati (andap asor)", "B. Acuh tak acuh", "C. Bersikap manja", "D. Menjauhinya"], a: 0 },
     { type: 'multiple', q: "Bagaimana cara berbicara yang baik menurut kitab Ngudi Susilo?", options: ["A. Cepat dan keras", "B. Halus, jelas, dan sopan", "C. Berteriak dari jauh", "D. Menggunakan kata-kata kasar"], a: 1 },
     { type: 'multiple', q: "Jika orang tua sedang duduk di bawah, sikap kita adalah...", options: ["A. Duduk di atas kursi yang tinggi", "B. Melompati mereka", "C. Tidak sekali-kali duduk di tempat yang lebih tinggi", "D. Menyuruh mereka pindah ke kursi"], a: 2 },
@@ -290,24 +286,18 @@ const dbQuestionsLevel1 = [
     { type: 'multiple', q: "Tujuan utama diajarkannya kitab Ngudi Susilo adalah...", options: ["A. Agar anak menjadi kaya", "B. Menjauhkan tingkah laku tak terpuji dan menuntun ke surga", "C. Agar bisa pamer di sekolah", "D. Untuk menghafal bahasa Jawa saja"], a: 1 }
 ];
 
+// --- BANK SOAL LEVEL 2 (20 Soal) ---
 const dbQuestionsLevel2 = [
-    // 2 Pilihan Ganda Bergambar
     { type: 'multiple', image: 'https://picsum.photos/203', q: "Gambar ini menunjukkan anak yang sedang belajar di kelas. Menurut Ngudi Susilo, di dalam kelas kita dilarang...", options: ["A. Bertanya pada guru", "B. Mencatat pelajaran", "C. Mengantuk dan bersendau gurau berlebihan", "D. Membaca buku teks"], a: 2 },
     { type: 'multiple', image: 'https://picsum.photos/204', q: "Perhatikan gambar seragam rapi ini. Saat hendak berangkat sekolah, kita harus mempersiapkan diri dengan...", options: ["A. Rajin, rapi, dan bersih", "B. Terburu-buru", "C. Memakai pakaian kotor", "D. Membawa mainan"], a: 0 },
-    
-    // 3 Jumble (Meneruskan Syair)
     { type: 'jumble', q: "Susun huruf berikut: Ibu bopo rewangono lamon repot, Ojo koyo wong kang gemagus ingkang... (T-K-W-A-O-N-G)", a: "WANGKOT" },
     { type: 'jumble', q: "Susun huruf berikut: Lamon ibu bopo prentah enggal tandang, Ojo bantah ojo sengol ojo... (G-A-P-M-A-N-M)", a: "MAMPANG" },
     { type: 'jumble', q: "Susun huruf berikut: Gunem alus alon lirih ingkang terang, Ojo kasar ojo misuh koyo... (A-J-N-B-G-U)", a: "BUJANG" },
-
-    // 5 Benar dan Salah (Boolean)
     { type: 'boolean', q: "Selesai sholat subuh kita boleh langsung tidur lagi tanpa melakukan kegiatan apapun.", a: false },
     { type: 'boolean', q: "Ketika berangkat ngaji atau sekolah, adab dan tata kramanya tetap sama-sama harus dijaga.", a: true },
     { type: 'boolean', q: "Jika diberi uang saku sekolah sedikit oleh orang tua, kita boleh marah dan tidak mau berangkat.", a: false },
     { type: 'boolean', q: "Kepada teman sekolah, kita tidak boleh bersikap bengis dan judes agar tidak dijuluki anak tidak waras.", a: true },
     { type: 'boolean', q: "Boleh mampir ke tempat bermain terlebih dahulu saat perjalanan pulang sekolah asalkan sebentar.", a: false },
-
-    // 10 Pilihan Ganda Biasa
     { type: 'multiple', q: "Apa yang harus diucapkan saat pamit sekolah kepada ibu dan bapak?", options: ["A. Minta uang saku yang banyak", "B. Mengucapkan salam", "C. Hanya melambaikan tangan", "D. Tidak perlu pamit"], a: 1 },
     { type: 'multiple', q: "Di tempat pendidikan atau sekolah, kita harus bersikap...", options: ["A. Tekun dan penuh perhatian (gathi)", "B. Sombong karena sudah pintar", "C. Santai saja karena tidak dinilai", "D. Suka mengganggu teman sebangku"], a: 0 },
     { type: 'multiple', q: "Selesai dari kegiatan belajar di sekolah, tindakan yang benar adalah...", options: ["A. Mampir ke rumah teman sampai sore", "B. Segera pulang agar tidak dicari orang tua", "C. Bermain game di warung", "D. Jalan-jalan sendirian"], a: 1 },
@@ -320,24 +310,18 @@ const dbQuestionsLevel2 = [
     { type: 'multiple', q: "Jika kita membaca saat orang tua sedang tidur, maka suara kita...", options: ["A. Dikeraskan agar orang tua bangga", "B. Dipelankan dengan suara lembut", "C. Direkam dan diputar keras", "D. Biasa saja"], a: 1 }
 ];
 
+// --- BANK SOAL LEVEL 3 (20 Soal) ---
 const dbQuestionsLevel3 = [
-    // 2 Pilihan Ganda Bergambar
     { type: 'multiple', image: 'https://picsum.photos/205', q: "Gambar ini melambangkan keluarga sedang menerima tamu. Saat ada tamu, sikap anak yang benar adalah...", options: ["A. Mondar-mandir mencari perhatian", "B. Menangis minta uang", "C. Menjaga tingkah laku agar tetap sopan", "D. Ikut campur pembicaraan orang dewasa"], a: 2 },
     { type: 'multiple', image: 'https://picsum.photos/206', q: "Tampak gambar sebuah perhiasan mahal. Jika orang tua kita kaya raya atau berpangkat, kita dilarang untuk...", options: ["A. Bersyukur", "B. Bersedekah", "C. Merasa sombong/hebat dari yang lain", "D. Berteman dengan orang biasa"], a: 2 },
-
-    // 3 Jumble (Meneruskan Syair)
     { type: 'jumble', q: "Susun huruf berikut: Yen wong tuwo lenggah ngisor siro ojo, Pisan lungguh duwur koyo joma... (O-J-U-J)", a: "JUJO" },
     { type: 'jumble', q: "Susun huruf berikut: Yen wong tuwo sare ojo geger guyon, Lamon siro nuju moco kudu... (L-O-N-A)", a: "ALON" },
     { type: 'jumble', q: "Susun huruf berikut: Lamon ibu bopo duko becik meneng, Ojo melu padon ugo ojo... (N-G-N-E-G-E-R-N)", a: "NGGRENENG" },
-
-    // 5 Benar dan Salah (Boolean)
     { type: 'boolean', q: "Kekayaan dan pangkat tidak abadi, tetapi budi pekerti akan terus membawa kebaikan.", a: true },
     { type: 'boolean', q: "Tatkala berhadapan dengan orang lain, kita boleh merengut seperti buaya asalkan sedang kesal.", a: false },
     { type: 'boolean', q: "Dilarang rewel meminta makanan atau uang saat orang tua sedang menemui tamu.", a: true },
     { type: 'boolean', q: "Jika tamu sudah pulang, anak-anak dianjurkan untuk berebut sisa hidangan tamu.", a: false },
     { type: 'boolean', q: "Berbagi makanan kepada saudara niatnya adalah mencari berkah, bukan sekadar berebut sisa makanan.", a: true },
-
-    // 10 Pilihan Ganda Biasa
     { type: 'multiple', q: "Pangkat dan jabatan mudah hilang, begitu juga dengan kekayaan. Hal ini mengajarkan kita untuk...", options: ["A. Tidak perlu mencari harta", "B. Menjadi pemalas", "C. Tidak sombong dengan status sosial", "D. Membanggakan harta orang tua"], a: 2 },
     { type: 'multiple', q: "Saat bertemu dengan sesama, ekspresi wajah kita seharusnya...", options: ["A. Ramah dan ajer", "B. Cemberut", "C. Marah-marah", "D. Ketakutan"], a: 0 },
     { type: 'multiple', q: "Jika tamu sedang berkunjung dan kita ada keperluan dengan orang tua, kita harus...", options: ["A. Menyela pembicaraan", "B. Menangis guling-guling", "C. Sabar menunggu hingga tamu pulang", "D. Mengusir tamu tersebut"], a: 2 },
@@ -350,24 +334,18 @@ const dbQuestionsLevel3 = [
     { type: 'multiple', q: "Tujuan bersikap rendah hati bukan karena kita merasa lemah, melainkan sebagai wujud dari...", options: ["A. Ketakutan", "B. Kemiskinan", "C. Akhlak Islam yang merdeka", "D. Paksaan"], a: 2 }
 ];
 
+// --- BANK SOAL LEVEL 4 (20 Soal) ---
 const dbQuestionsLevel4 = [
-    // 2 Pilihan Ganda Bergambar
     { type: 'multiple', image: 'https://picsum.photos/207', q: "Gambar ini menunjukkan tokoh pahlawan bersorban. Menurut syair, mengenakan sorban atau penutup kepala itu tidak kolot, buktinya dipakai oleh pahlawan bernama...", options: ["A. Pangeran Diponegoro & Imam Bonjol", "B. Jenderal Sudirman", "C. Soekarno", "D. Pattimura"], a: 0 },
     { type: 'multiple', image: 'https://picsum.photos/208', q: "Gambar seorang dokter yang sedang bertugas. Untuk mencapai profesi ini agar berkah, anak Islam harus membekali diri dengan ilmu umum dan...", options: ["A. Harta warisan", "B. Ilmu sihir", "C. Ilmu agama (penuntun laku benar)", "D. Koneksi orang dalam"], a: 2 },
-
-    // 3 Jumble (Meneruskan Syair)
     { type: 'jumble', q: "Susun huruf berikut: Lamon arep budal menyang pamulangan, Thotho-thotho ingkang rajin kang... (N-I-S-R-A-E-K)", a: "RESIKAN" },
     { type: 'jumble', q: "Susun huruf berikut: Disangoni akeh sithik kudu trimo, Supoyo ing tembe dadi wong... (O-M-T-U-O)", a: "UTOMO" },
     { type: 'jumble', q: "Susun huruf berikut: Ono pamulangan kudu tansah gathi, Nampo pawulangan ilmu kang... (G-I-W-T-A-I)", a: "WIGATI" },
-
-    // 5 Benar dan Salah (Boolean)
     { type: 'boolean', q: "Menurut kitab Ngudi Susilo, memamerkan gaya rambut dengan membiarkan kepala gundul saat shalat adalah adab yang sangat baik.", a: false },
     { type: 'boolean', q: "Anak Islam harus memiliki cita-cita luhur agar dunia dan akhiratnya bisa makmur sejahtera.", a: true },
-    { type: 'boolean', q: "Nabi Muhammad SAW di masa mudanya adalah seorang pedagang kayu bakar.", a: false }, // Beliau penggembala, Ali yang kayu bakar
+    { type: 'boolean', q: "Nabi Muhammad SAW di masa mudanya adalah seorang pedagang kayu bakar.", a: false },
     { type: 'boolean', q: "Wahid Hasyim adalah contoh santri pondok yang tidak sekolah formal namun sukses menjadi Menteri.", a: true },
     { type: 'boolean', q: "Menjadi penggembala kambing atau penarik cikar adalah pekerjaan hina yang harus dijauhi meskipun kita rajin menuntut ilmu.", a: false },
-
-    // 10 Pilihan Ganda Biasa
     { type: 'multiple', q: "Menghina kebiasaan memakai sorban sama halnya mengejek pahlawan nasional, contohnya...", options: ["A. Ki Hajar Dewantara", "B. Tuanku Imam Bonjol", "C. Raden Saleh", "D. Sultan Hasanuddin"], a: 1 },
     { type: 'multiple', q: "Mengenakan penutup kepala (seperti songkok/blangkon/sorban) dinilai lebih baik daripada...", options: ["A. Memakai topi", "B. Gundul tanpa penutup", "C. Memakai helm", "D. Memakai mahkota"], a: 1 },
     { type: 'multiple', q: "Apa tujuan kita dituntut untuk meraih ilmu umum dan ilmu agama secara bersamaan?", options: ["A. Agar dipuji sebagai sarjana", "B. Agar bisa berdebat dengan teman", "C. Agar dapat memimpin bangsa menuju kesejahteraan dan kemuliaan", "D. Agar bisa pamer di desa"], a: 2 },
@@ -380,6 +358,7 @@ const dbQuestionsLevel4 = [
     { type: 'multiple', q: "Keberhasilan meraih cita-cita yang luhur sangat bergantung pada niat teguh, menuntut ilmu, dan laku yang...", options: ["A. Pemarah", "B. Sombong", "C. Jujur", "D. Licik"], a: 2 }
 ];
 
+/* === DATA KOLEKSI === */
 const dbCollection = [
     { id: 0, cat: 0, icon: "🚲", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI-p8ydZHwi26WXbuJVXXy31qUSDcc7mpgDg9T_yTkjafj2TDBS4pe4b5rqYtYm8FJ8Olf3OKvvmzOa5dEn5uLTUAQvvlWBcuKzWxXS-WTg7oF2wmqweLnUt9HfDHKO_Kn1mtj-vrerfxTzn1KDYjJVvUN3Qwd0CJa6BkVPMAJpCoUe49soX_b2to4xFw/s1600/sepeda.webp", name: "Sepeda", unlocked: false },
     { id: 1, cat: 0, icon: "🏍️", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEia96KeBdZJ5HXo4lt2w8414vMRcZuM4ZicVtkUCUOiykOhZkT-8c0sTbErpI6YsmfMSRlsHQda6iImBOaaSOB4vZ-_LBWHrqBILPu5wkVqKah04RAGC-0yWjE14EZDWkJzF-4ejmt5EDI3sBgbw8pxbsOgCrk986li0QBCGm-NJdyM8iNm6ORmMRcrEUY/s1600/motor.webp", name: "Motor", unlocked: false },
@@ -446,7 +425,8 @@ const AudioSys = {
 const Game = {
     level: 1, tickets: 1, questionIndex: 0, currentQ: null, timeLeft: 30, timerInt: null, typeInt: null,
     lifelineTimeUsed: false, lifeline5050Used: false, lifelineSwapUsed: false, jumbleData: null,
-    prizeLadder: [100000, 300000, 1000000, 5000000, 10000000, 50000000, 100000000, 250000000, 500000000, 1000000000],
+    // Diperpanjang menjadi 20 tingkat hadiah untuk menampung 20 soal per level
+    prizeLadder: [100000, 200000, 300000, 500000, 1000000, 2000000, 3000000, 5000000, 10000000, 25000000, 50000000, 100000000, 200000000, 300000000, 500000000, 1000000000, 2000000000, 3000000000, 5000000000, 10000000000],
 
     init() {
         document.getElementById('ui-tickets').innerText = this.tickets;
@@ -464,7 +444,14 @@ const Game = {
         document.getElementById('life-time').disabled = false;
         document.getElementById('life-5050').disabled = false;
         document.getElementById('life-swap').disabled = false;
-        this.questions = [...dbQuestions].sort(() => 0.5 - Math.random());
+        
+        // Memilih Bank Soal Berdasarkan Level
+        let currentDB = dbQuestionsLevel1;
+        if(this.level === 2) currentDB = dbQuestionsLevel2;
+        else if(this.level === 3) currentDB = dbQuestionsLevel3;
+        else if(this.level >= 4) currentDB = dbQuestionsLevel4;
+        
+        this.questions = [...currentDB].sort(() => 0.5 - Math.random());
         this.questionIndex = 0;
         this.loadQuestion();
     },
@@ -663,7 +650,7 @@ const Game = {
     },
     gacha() {
         AudioSys.click();
-        if (this.tickets < 1) { alert("Tiket Anda 0. Main kuis untuk mendapatkan tiket!"); return; }
+        if (this.tickets < 1) { alert("Anda belum mendapatkan tiket hadiah, silakan main dahulu."); return; }
         
         const prizeOrder = [6, 11, 0, 5, 10, 8, 9, 7, 4, 1, 2, 3]; 
         let unlockedItem = null;
@@ -676,8 +663,10 @@ const Game = {
         
         this.tickets -= 1; this.init(); unlockedItem.unlocked = true; 
         AudioSys.correct();
-        alert(`Alhamdulillah! Anda mendapatkan: ${unlockedItem.icon} ${unlockedItem.name}`);
-        UI.openModal('modal-collection'); UI.switchTab(unlockedItem.cat);
+        
+        UI.openModal('modal-collection'); 
+        UI.switchTab(unlockedItem.cat);
+        document.getElementById('collection-msg').innerText = `Alhamdulillah, Selamat ! Anda mendapatkan hadiah sebuah ${unlockedItem.name}.`;
     }
 };
 
@@ -688,10 +677,13 @@ const UI = {
         document.querySelectorAll('.modal-box').forEach(b => b.classList.add('hidden'));
         document.getElementById(modalId).classList.remove('hidden');
         if (modalId === 'modal-shop') {
-            document.getElementById('shop-ticket-cost').innerText = "1 TIKET";
+            document.getElementById('shop-ticket-cost').innerText = Game.tickets > 0 ? "1 TIKET" : "0 TIKET";
             document.getElementById('shop-desc').innerText = Game.tickets > 0 ? `Tukarkan 1 Tiket untuk mendapatkan hadiah (sesuai urutan harga termurah).\nTiket Anda saat ini: ${Game.tickets}` : `Anda belum memiliki tiket.`;
         }
-        if (modalId === 'modal-collection') this.switchTab(0);
+        if (modalId === 'modal-collection') {
+            document.getElementById('collection-msg').innerText = '';
+            this.switchTab(0);
+        }
     },
     closeModal() {
         try { AudioSys.click(); } catch(e) {}
