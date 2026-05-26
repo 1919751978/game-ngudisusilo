@@ -260,14 +260,124 @@
 </div>
 
 <script>
-const dbQuestions = [
-    { type: 'multiple', q: "Apa yang harus dilakukan anak saat bertemu orang tua menurut Kitab Ngudi Susilo?", options: ["A. Berlari menjauh", "B. Memberi salam dan hormat", "C. Pura-pura tidak melihat", "D. Mengabaikan saja"], a: 1 },
-    { type: 'multiple', q: "Bagaimana sikap siswa terhadap guru saat di sekolah?", options: ["A. Membangkang perintahnya", "B. Takzim dan patuh", "C. Menantang saat dinasihati", "D. Mengacuhkan pelajaran"], a: 1 },
-    { type: 'multiple', q: "Mengapa anak harus rajin belajar?", options: ["A. Agar dipuji teman", "B. Agar bisa sombong", "C. Untuk masa depan dan bakti", "D. Karena terpaksa"], a: 2 },
-    { type: 'boolean', q: "Keluarga sebagai lingkungan sosial pertama dan anak menerima pendidikan pertama serta utama dari rumah.", a: true },
-    { type: 'boolean', q: "Berbohong demi kebaikan diri sendiri agar tidak dimarahi diperbolehkan dalam akhlak Islami.", a: false },
-    { type: 'jumble', q: "Susunlah huruf berikut menjadi nama kitab yang sedang kita pelajari: G-U-D-I-N-S-U-S-I-L-O", a: "NGUDISUSILO" },
-    { type: 'multiple', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/500px-Taj_Mahal_%28Edited%29.jpeg', q: "Bangunan bersejarah Islam pada gambar ini bernama...", options: ["A. Taj Mahal", "B. Masjid Sheikh Zayed", "C. Angkor Wat", "D. Hagia Sophia"], a: 0 }
+const dbQuestionsLevel1 = [
+    // 2 Pilihan Ganda Bergambar
+    { type: 'multiple', image: 'https://picsum.photos/201', q: "Perhatikan gambar anak yang sedang membantu ibunya ini. Menurut Kitab Ngudi Susilo, jika ibu bapak sedang repot, kita harus...", options: ["A. Pura-pura tidur", "B. Rajin membantu", "C. Pergi bermain", "D. Meminta uang"], a: 1 },
+    { type: 'multiple', image: 'https://picsum.photos/202', q: "Gambar ini menunjukkan waktu fajar. Jika kenthong subuh sudah berbunyi, hal pertama yang harus kita lakukan adalah...", options: ["A. Melanjutkan tidur", "B. Menonton TV", "C. Segera bangun dan mandi", "D. Menunggu dibangunkan"], a: 2 },
+    
+    // 3 Jumble (Meneruskan Syair)
+    { type: 'jumble', q: "Susun huruf berikut untuk meneruskan syair: Iki syi'ir kanggo bocah lanang wadon, Nebihake tingkah laku ingkang... (O-W-A-N)", a: "AWON" },
+    { type: 'jumble', q: "Susun huruf berikut untuk meneruskan syair: Bocah iku wiwit umur pitung tahun, Kudu ajar thotho keben ora... (T-U-N-E-G)", a: "GETUN" },
+    { type: 'jumble', q: "Susun huruf berikut untuk meneruskan syair: Sarto nerangake budi kang prayugo, Kanggo dalan podho mlebu ing... (O-S-U-A-R-W-G)", a: "SUWARGO" },
+
+    // 5 Benar dan Salah (Boolean)
+    { type: 'boolean', q: "Anak berumur tujuh tahun sudah harus diajari aturan dan tata krama yang santun.", a: true },
+    { type: 'boolean', q: "Jika kita diperintah oleh orang tua, kita boleh menundanya sampai permainan selesai.", a: false },
+    { type: 'boolean', q: "Menurut kitab Ngudi Susilo, kita harus menyayangi ibu yang merawat sejak kecil dan bapak yang menyayangi kita.", a: true },
+    { type: 'boolean', q: "Berbicara kepada orang tua boleh menggunakan nada keras asalkan kita sedang marah.", a: false },
+    { type: 'boolean', q: "Selesai sholat subuh, kita dianjurkan untuk mengerjakan tugas seperti menyapu rumah.", a: true },
+
+    // 10 Pilihan Ganda Biasa
+    { type: 'multiple', q: "Sikap yang tepat kepada orang yang lebih tua meskipun bukan keluarga adalah...", options: ["A. Bersikap rendah hati (andap asor)", "B. Acuh tak acuh", "C. Bersikap manja", "D. Menjauhinya"], a: 0 },
+    { type: 'multiple', q: "Bagaimana cara berbicara yang baik menurut kitab Ngudi Susilo?", options: ["A. Cepat dan keras", "B. Halus, jelas, dan sopan", "C. Berteriak dari jauh", "D. Menggunakan kata-kata kasar"], a: 1 },
+    { type: 'multiple', q: "Jika orang tua sedang duduk di bawah, sikap kita adalah...", options: ["A. Duduk di atas kursi yang tinggi", "B. Melompati mereka", "C. Tidak sekali-kali duduk di tempat yang lebih tinggi", "D. Menyuruh mereka pindah ke kursi"], a: 2 },
+    { type: 'multiple', q: "Jika kita berjalan melewati orang tua, apa yang harus dilakukan?", options: ["A. Berlari kencang", "B. Permisi (nuwun amit) sambil merendahkan badan", "C. Berjalan tegap membusungkan dada", "D. Menunduk tanpa menyapa"], a: 1 },
+    { type: 'multiple', q: "Saat ibu atau bapak sedang tidur, maka anak tidak boleh...", options: ["A. Merapikan mainan", "B. Belajar di kamar", "C. Ribut dan bercanda keras", "D. Berjalan pelan-pelan"], a: 2 },
+    { type: 'multiple', q: "Apa yang harus dilakukan jika dinasihati (duko) oleh orang tua?", options: ["A. Menjawab dengan alasan panjang", "B. Menutup telinga", "C. Pergi meninggalkan rumah", "D. Diam mendengarkan dan tidak membantah"], a: 3 },
+    { type: 'multiple', q: "Sebagai anak, kita harus pandai membagi waktu. Jangan sampai asyik bermain hingga lupa...", options: ["A. Membeli mainan", "B. Makan dan sholat", "C. Mengganggu teman", "D. Tidur larut malam"], a: 1 },
+    { type: 'multiple', q: "Jika tiba waktu sholat, sikap yang benar adalah...", options: ["A. Menunggu disuruh berulang kali", "B. Lekas kerjakan jangan sampai lengah", "C. Minta ditemani", "D. Mengerjakan nanti saja"], a: 1 },
+    { type: 'multiple', q: "Jika tidak ada pekerjaan di rumah, hal terbaik yang bisa dilakukan adalah...", options: ["A. Membaca Al-Qur'an meskipun sedikit", "B. Tidur seharian", "C. Mengganggu adik", "D. Mengeluh bosan"], a: 0 },
+    { type: 'multiple', q: "Tujuan utama diajarkannya kitab Ngudi Susilo adalah...", options: ["A. Agar anak menjadi kaya", "B. Menjauhkan tingkah laku tak terpuji dan menuntun ke surga", "C. Agar bisa pamer di sekolah", "D. Untuk menghafal bahasa Jawa saja"], a: 1 }
+];
+
+const dbQuestionsLevel2 = [
+    // 2 Pilihan Ganda Bergambar
+    { type: 'multiple', image: 'https://picsum.photos/203', q: "Gambar ini menunjukkan anak yang sedang belajar di kelas. Menurut Ngudi Susilo, di dalam kelas kita dilarang...", options: ["A. Bertanya pada guru", "B. Mencatat pelajaran", "C. Mengantuk dan bersendau gurau berlebihan", "D. Membaca buku teks"], a: 2 },
+    { type: 'multiple', image: 'https://picsum.photos/204', q: "Perhatikan gambar seragam rapi ini. Saat hendak berangkat sekolah, kita harus mempersiapkan diri dengan...", options: ["A. Rajin, rapi, dan bersih", "B. Terburu-buru", "C. Memakai pakaian kotor", "D. Membawa mainan"], a: 0 },
+    
+    // 3 Jumble (Meneruskan Syair)
+    { type: 'jumble', q: "Susun huruf berikut: Ibu bopo rewangono lamon repot, Ojo koyo wong kang gemagus ingkang... (T-K-W-A-O-N-G)", a: "WANGKOT" },
+    { type: 'jumble', q: "Susun huruf berikut: Lamon ibu bopo prentah enggal tandang, Ojo bantah ojo sengol ojo... (G-A-P-M-A-N-M)", a: "MAMPANG" },
+    { type: 'jumble', q: "Susun huruf berikut: Gunem alus alon lirih ingkang terang, Ojo kasar ojo misuh koyo... (A-J-N-B-G-U)", a: "BUJANG" },
+
+    // 5 Benar dan Salah (Boolean)
+    { type: 'boolean', q: "Selesai sholat subuh kita boleh langsung tidur lagi tanpa melakukan kegiatan apapun.", a: false },
+    { type: 'boolean', q: "Ketika berangkat ngaji atau sekolah, adab dan tata kramanya tetap sama-sama harus dijaga.", a: true },
+    { type: 'boolean', q: "Jika diberi uang saku sekolah sedikit oleh orang tua, kita boleh marah dan tidak mau berangkat.", a: false },
+    { type: 'boolean', q: "Kepada teman sekolah, kita tidak boleh bersikap bengis dan judes agar tidak dijuluki anak tidak waras.", a: true },
+    { type: 'boolean', q: "Boleh mampir ke tempat bermain terlebih dahulu saat perjalanan pulang sekolah asalkan sebentar.", a: false },
+
+    // 10 Pilihan Ganda Biasa
+    { type: 'multiple', q: "Apa yang harus diucapkan saat pamit sekolah kepada ibu dan bapak?", options: ["A. Minta uang saku yang banyak", "B. Mengucapkan salam", "C. Hanya melambaikan tangan", "D. Tidak perlu pamit"], a: 1 },
+    { type: 'multiple', q: "Di tempat pendidikan atau sekolah, kita harus bersikap...", options: ["A. Tekun dan penuh perhatian (gathi)", "B. Sombong karena sudah pintar", "C. Santai saja karena tidak dinilai", "D. Suka mengganggu teman sebangku"], a: 0 },
+    { type: 'multiple', q: "Selesai dari kegiatan belajar di sekolah, tindakan yang benar adalah...", options: ["A. Mampir ke rumah teman sampai sore", "B. Segera pulang agar tidak dicari orang tua", "C. Bermain game di warung", "D. Jalan-jalan sendirian"], a: 1 },
+    { type: 'multiple', q: "Sesampainya di rumah sepulang sekolah, yang harus dilakukan pertama kali adalah...", options: ["A. Langsung makan tanpa cuci tangan", "B. Bermain dengan pakaian seragam", "C. Berganti pakaian agar tetap rapi dan bersih", "D. Tidur siang memakai sepatu"], a: 2 },
+    { type: 'multiple', q: "Bagaimana sikap murid terhadap guru menurut kitab ini?", options: ["A. Menganggapnya sebagai teman biasa", "B. Taat dan berbakti serta mematuhi perintahnya yang baik", "C. Membantah jika diberi tugas", "D. Hanya hormat jika diberi nilai bagus"], a: 1 },
+    { type: 'multiple', q: "Sikap kita terhadap larangan guru adalah...", options: ["A. Dilanggar sembunyi-sembunyi", "B. Dihindari dengan sungguh-sungguh agar kelak berguna", "C. Dilakukan jika tidak ada yang melihat", "D. Diabaikan saja"], a: 1 },
+    { type: 'multiple', q: "Hubungan dengan teman dan saudara di rumah haruslah...", options: ["A. Rukun dan harmonis", "B. Saling bersaing mencari perhatian", "C. Sering bertengkar memperebutkan barang", "D. Tidak saling bertegur sapa"], a: 0 },
+    { type: 'multiple', q: "Syair mengatakan jangan rukun yang palsu seperti kucing belang berebut...", options: ["A. Ikan", "B. Tulang", "C. Tikus", "D. Daging"], a: 2 },
+    { type: 'multiple', q: "Seorang yang masih muda harus memiliki sikap...", options: ["A. Ingin selalu dihormati", "B. Merasa tahu segalanya", "C. Menghargai dan menghormati orang yang lebih tua", "D. Tidak mau dinasihati"], a: 2 },
+    { type: 'multiple', q: "Jika kita membaca saat orang tua sedang tidur, maka suara kita...", options: ["A. Dikeraskan agar orang tua bangga", "B. Dipelankan dengan suara lembut", "C. Direkam dan diputar keras", "D. Biasa saja"], a: 1 }
+];
+
+const dbQuestionsLevel3 = [
+    // 2 Pilihan Ganda Bergambar
+    { type: 'multiple', image: 'https://picsum.photos/205', q: "Gambar ini melambangkan keluarga sedang menerima tamu. Saat ada tamu, sikap anak yang benar adalah...", options: ["A. Mondar-mandir mencari perhatian", "B. Menangis minta uang", "C. Menjaga tingkah laku agar tetap sopan", "D. Ikut campur pembicaraan orang dewasa"], a: 2 },
+    { type: 'multiple', image: 'https://picsum.photos/206', q: "Tampak gambar sebuah perhiasan mahal. Jika orang tua kita kaya raya atau berpangkat, kita dilarang untuk...", options: ["A. Bersyukur", "B. Bersedekah", "C. Merasa sombong/hebat dari yang lain", "D. Berteman dengan orang biasa"], a: 2 },
+
+    // 3 Jumble (Meneruskan Syair)
+    { type: 'jumble', q: "Susun huruf berikut: Yen wong tuwo lenggah ngisor siro ojo, Pisan lungguh duwur koyo joma... (O-J-U-J)", a: "JUJO" },
+    { type: 'jumble', q: "Susun huruf berikut: Yen wong tuwo sare ojo geger guyon, Lamon siro nuju moco kudu... (L-O-N-A)", a: "ALON" },
+    { type: 'jumble', q: "Susun huruf berikut: Lamon ibu bopo duko becik meneng, Ojo melu padon ugo ojo... (N-G-N-E-G-E-R-N)", a: "NGGRENENG" },
+
+    // 5 Benar dan Salah (Boolean)
+    { type: 'boolean', q: "Kekayaan dan pangkat tidak abadi, tetapi budi pekerti akan terus membawa kebaikan.", a: true },
+    { type: 'boolean', q: "Tatkala berhadapan dengan orang lain, kita boleh merengut seperti buaya asalkan sedang kesal.", a: false },
+    { type: 'boolean', q: "Dilarang rewel meminta makanan atau uang saat orang tua sedang menemui tamu.", a: true },
+    { type: 'boolean', q: "Jika tamu sudah pulang, anak-anak dianjurkan untuk berebut sisa hidangan tamu.", a: false },
+    { type: 'boolean', q: "Berbagi makanan kepada saudara niatnya adalah mencari berkah, bukan sekadar berebut sisa makanan.", a: true },
+
+    // 10 Pilihan Ganda Biasa
+    { type: 'multiple', q: "Pangkat dan jabatan mudah hilang, begitu juga dengan kekayaan. Hal ini mengajarkan kita untuk...", options: ["A. Tidak perlu mencari harta", "B. Menjadi pemalas", "C. Tidak sombong dengan status sosial", "D. Membanggakan harta orang tua"], a: 2 },
+    { type: 'multiple', q: "Saat bertemu dengan sesama, ekspresi wajah kita seharusnya...", options: ["A. Ramah dan ajer", "B. Cemberut", "C. Marah-marah", "D. Ketakutan"], a: 0 },
+    { type: 'multiple', q: "Jika tamu sedang berkunjung dan kita ada keperluan dengan orang tua, kita harus...", options: ["A. Menyela pembicaraan", "B. Menangis guling-guling", "C. Sabar menunggu hingga tamu pulang", "D. Mengusir tamu tersebut"], a: 2 },
+    { type: 'multiple', q: "Berebut sisa hidangan tamu diibaratkan dalam syair seperti ikan keting yang berebut...", options: ["A. Cacing", "B. Kotoran (Najis)", "C. Roti", "D. Lumut"], a: 1 },
+    { type: 'multiple', q: "Apa yang harus dilakukan jika ayah memberikan sisa makanan dari orang 'Alim/Kyai?", options: ["A. Dimakan sendiri sembunyi-sembunyi", "B. Dibuang karena sisa", "C. Dibagi rata dengan saudara untuk mencari berkah", "D. Dijual kepada teman"], a: 2 },
+    { type: 'multiple', q: "Anak Islam saat ini harus waspada agar tidak terlena, sebab jika terlena akan menyebabkan...", options: ["A. Kesenangan", "B. Kecewa/Tiwas", "C. Kekayaan", "D. Kepintaran"], a: 1 },
+    { type: 'multiple', q: "Mencari ilmu itu penting, tetapi apa yang harus selalu diutamakan bersamanya?", options: ["A. Adab dan budi pekerti", "B. Harta benda", "C. Pakaian mahal", "D. Kekuasaan"], a: 0 },
+    { type: 'multiple', q: "Banyak anak pintar tapi budi pekertinya tidak halus, biasanya disebabkan karena...", options: ["A. Terlalu banyak membaca", "B. Bersikap sombong dan merasa paling bagus", "C. Kurang tidur", "D. Terlalu sopan"], a: 1 },
+    { type: 'multiple', q: "Sikap merasa paling pintar dan tidak ada yang menandingi akan membuat anak menjadi...", options: ["A. Dihormati guru", "B. Disukai banyak teman", "C. Tidak menghargai orang tua", "D. Cepat kaya"], a: 2 },
+    { type: 'multiple', q: "Tujuan bersikap rendah hati bukan karena kita merasa lemah, melainkan sebagai wujud dari...", options: ["A. Ketakutan", "B. Kemiskinan", "C. Akhlak Islam yang merdeka", "D. Paksaan"], a: 2 }
+];
+
+const dbQuestionsLevel4 = [
+    // 2 Pilihan Ganda Bergambar
+    { type: 'multiple', image: 'https://picsum.photos/207', q: "Gambar ini menunjukkan tokoh pahlawan bersorban. Menurut syair, mengenakan sorban atau penutup kepala itu tidak kolot, buktinya dipakai oleh pahlawan bernama...", options: ["A. Pangeran Diponegoro & Imam Bonjol", "B. Jenderal Sudirman", "C. Soekarno", "D. Pattimura"], a: 0 },
+    { type: 'multiple', image: 'https://picsum.photos/208', q: "Gambar seorang dokter yang sedang bertugas. Untuk mencapai profesi ini agar berkah, anak Islam harus membekali diri dengan ilmu umum dan...", options: ["A. Harta warisan", "B. Ilmu sihir", "C. Ilmu agama (penuntun laku benar)", "D. Koneksi orang dalam"], a: 2 },
+
+    // 3 Jumble (Meneruskan Syair)
+    { type: 'jumble', q: "Susun huruf berikut: Lamon arep budal menyang pamulangan, Thotho-thotho ingkang rajin kang... (N-I-S-R-A-E-K)", a: "RESIKAN" },
+    { type: 'jumble', q: "Susun huruf berikut: Disangoni akeh sithik kudu trimo, Supoyo ing tembe dadi wong... (O-M-T-U-O)", a: "UTOMO" },
+    { type: 'jumble', q: "Susun huruf berikut: Ono pamulangan kudu tansah gathi, Nampo pawulangan ilmu kang... (G-I-W-T-A-I)", a: "WIGATI" },
+
+    // 5 Benar dan Salah (Boolean)
+    { type: 'boolean', q: "Menurut kitab Ngudi Susilo, memamerkan gaya rambut dengan membiarkan kepala gundul saat shalat adalah adab yang sangat baik.", a: false },
+    { type: 'boolean', q: "Anak Islam harus memiliki cita-cita luhur agar dunia dan akhiratnya bisa makmur sejahtera.", a: true },
+    { type: 'boolean', q: "Nabi Muhammad SAW di masa mudanya adalah seorang pedagang kayu bakar.", a: false }, // Beliau penggembala, Ali yang kayu bakar
+    { type: 'boolean', q: "Wahid Hasyim adalah contoh santri pondok yang tidak sekolah formal namun sukses menjadi Menteri.", a: true },
+    { type: 'boolean', q: "Menjadi penggembala kambing atau penarik cikar adalah pekerjaan hina yang harus dijauhi meskipun kita rajin menuntut ilmu.", a: false },
+
+    // 10 Pilihan Ganda Biasa
+    { type: 'multiple', q: "Menghina kebiasaan memakai sorban sama halnya mengejek pahlawan nasional, contohnya...", options: ["A. Ki Hajar Dewantara", "B. Tuanku Imam Bonjol", "C. Raden Saleh", "D. Sultan Hasanuddin"], a: 1 },
+    { type: 'multiple', q: "Mengenakan penutup kepala (seperti songkok/blangkon/sorban) dinilai lebih baik daripada...", options: ["A. Memakai topi", "B. Gundul tanpa penutup", "C. Memakai helm", "D. Memakai mahkota"], a: 1 },
+    { type: 'multiple', q: "Apa tujuan kita dituntut untuk meraih ilmu umum dan ilmu agama secara bersamaan?", options: ["A. Agar dipuji sebagai sarjana", "B. Agar bisa berdebat dengan teman", "C. Agar dapat memimpin bangsa menuju kesejahteraan dan kemuliaan", "D. Agar bisa pamer di desa"], a: 2 },
+    { type: 'multiple', q: "Cita-cita yang tinggi tidak akan tercapai apabila tidak...", options: ["A. Dicita-citakan dan diusahakan sungguh-sungguh sejak kecil", "B. Memiliki banyak uang saku", "C. Didukung oleh pejabat", "D. Diramalkan oleh peramal"], a: 0 },
+    { type: 'multiple', q: "Kelak orang tua kita akan menua dan meninggalkan kita. Oleh karena itu, siapa yang kelak akan memimpin bangsa ini?", options: ["A. Orang asing", "B. Tetangga", "C. Kita sendiri (anak-anak saat ini)", "D. Tidak ada"], a: 2 },
+    { type: 'multiple', q: "Negara sangat membutuhkan berbagai profesi, KECUALI...", options: ["A. Dokter", "B. Pemalas yang rewel", "C. Guru dan Kyai", "D. Menteri dan Bupati"], a: 1 },
+    { type: 'multiple', q: "Jika anak Islam tidak mau berusaha dan belajar keras, maka posisinya selamanya hanya akan menjadi...", options: ["A. Pemimpin", "B. Direktur", "C. Pengikut (diibaratkan penggembala/penumpang cikar)", "D. Saudagar"], a: 2 },
+    { type: 'multiple', q: "Sahabat Nabi yang dicontohkan dulunya adalah pedagang di pasar namun sukses memimpin masyarakat adalah...", options: ["A. Abu Bakar Ash-Shiddiq", "B. Umar bin Khattab", "C. Utsman bin Affan", "D. Bilal bin Rabah"], a: 0 },
+    { type: 'multiple', q: "Sahabat Ali bin Abi Thalib sebelum menjadi panglima besar yang tangkas dulunya adalah seorang...", options: ["A. Nelayan", "B. Pedagang kayu bakar", "C. Tukang jahit", "D. Penulis istana"], a: 1 },
+    { type: 'multiple', q: "Keberhasilan meraih cita-cita yang luhur sangat bergantung pada niat teguh, menuntut ilmu, dan laku yang...", options: ["A. Pemarah", "B. Sombong", "C. Jujur", "D. Licik"], a: 2 }
 ];
 
 const dbCollection = [
