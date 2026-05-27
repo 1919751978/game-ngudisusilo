@@ -124,6 +124,17 @@
         .btn-continue { background: linear-gradient(to bottom, #11998e, #38ef7d); }
         .btn-giveup { background: linear-gradient(to bottom, #cb2d3e, #ef473a); }
         .btn-neutral { background: linear-gradient(to bottom, #444, #222); border-color: #888; }
+
+        /* === ANIMASI & GAYA KHUSUS GRAND FINALE === */
+        .finale-title { font-size: 26px; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.8); animation: pulse 1.5s infinite; text-align: center; font-weight: 900; margin-top: -35px; background: #111; border: 3px solid var(--gold-main); padding: 12px; border-radius: 10px; width: 95%; position: relative; left: 50%; transform: translateX(-50%); box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .finale-congrats { font-size: 2.2rem; font-weight: 900; margin-top: 15px; color: #fff; text-shadow: 2px 2px 5px #000, 0 0 25px #38ef7d; text-align: center; animation: glow 2s ease-in-out infinite alternate; }
+        .finale-sub { font-size: 1.1rem; color: #eee; margin-bottom: 10px; text-align: center; padding: 0 10px; line-height: 1.4; }
+        .finale-star { font-size: 3.5rem; margin: 15px 0; text-align: center; animation: bounce 2s infinite; display: flex; justify-content: center; gap: 10px; }
+        .btn-final { background: linear-gradient(45deg, #ffd700, #ff8c00); border: 2px solid #fff; padding: 15px 30px; font-weight: 900; color: #000; border-radius: 30px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px rgba(255,215,0,0.5); width: 100%; transition: transform 0.2s; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); margin-bottom: 0;}
+        .btn-final:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(255,215,0,0.8); }
+        @keyframes pulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes glow { from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073; } to { text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6; } }
     </style>
 </head>
 <body>
@@ -137,7 +148,7 @@
     <div class="level-hud hidden" id="ui-level">Lv. 1</div>
     <div class="top-hud">
         <svg viewBox="0 0 24 24"><path d="M22,10V6a2,2 0 0,0 -2,-2H4A2,2 0 0,0 2,6v4c1.1,0 2,0.9 2,2s-0.9,2 -2,2v4a2,2 0 0,0 2,2h16a2,2 0 0,0 2,-2v-4c-1.1,0 -2,-0.9 -2,-2s0.9,-2 2,-2m-7,2.5l-2.5,1.5l1,-2.75l-2.25,-1.75h2.75l1,-2.75l1,2.75h2.75l-2.25,1.75l1,2.75l-2.5,-1.5z"/></svg>
-        <span class="ticket-count" id="ui-tickets">1</span>
+        <span class="ticket-count" id="ui-tickets">0</span>
     </div>
 
     <!-- LAYAR: BERANDA -->
@@ -149,10 +160,7 @@
                 <div class="logo-subtitle">Indonesia</div>
             </div>
             <div style="margin-top: 15px; font-size: 14px; color: #ddd; font-style: italic;">Edisi Kitab Ngudi Susilo</div>
-            
-            <!-- INI BAGIAN YANG DITAMBAHKAN -->
             <div style="margin-top: 5px; font-size: 11px; color: #00d2ff; letter-spacing: 1px; font-weight: bold;">Created by fkdtdukuhturi.web.id</div>
-            
         </div>
 
         <div class="btn-play-container">
@@ -161,7 +169,6 @@
             </button>
         </div>
 
-        <!-- NAVIGASI BAWAH: SESUAI REQUEST (✈️ KOLEKSI HADIAH | 🎁 TIKET HADIAH | ⚙️ PENGATURAN) -->
         <div class="bottom-nav">
             <div class="nav-btn" onclick="UI.openModal('modal-collection')">
                 <div class="nav-icon">✈️</div>
@@ -227,7 +234,7 @@
                 <div id="shop-desc" style="text-align: center; margin-bottom: 10px; color: var(--gold-light); font-size: 14px;"></div>
                 <div class="shop-item">
                     <div style="font-size: 60px;">🎁</div>
-                    <div class="ticket-cost" id="shop-ticket-cost">1 TIKET</div>
+                    <div class="ticket-cost" id="shop-ticket-cost">0 TIKET</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -259,6 +266,18 @@
                 <p id="end-msg" style="margin-bottom: 20px; font-size: 16px;"></p>
                 <button id="btn-action-1" class="btn-action btn-continue">Lanjutkan</button>
                 <button id="btn-action-2" class="btn-action btn-giveup">Menyerah</button>
+            </div>
+        </div>
+
+        <!-- MODAL GRAND FINALE KHUSUS LEVEL 4 -->
+        <div id="modal-finale" class="modal-box hidden" style="background: radial-gradient(circle, #2a0845 0%, #150f24 100%);">
+            <div class="finale-title">GRAND FINALE</div>
+            <div class="modal-content" style="text-align: center; padding-top: 5px;">
+                <div class="finale-congrats">SELAMAT!</div>
+                <div class="finale-star"><span>🏆</span><span>🏆</span><span>🏆</span></div>
+                <div class="finale-sub">Anda telah menamatkan seluruh tantangan dan menjadi <strong style="color:var(--gold-light);">Master Ngudi Susilo!</strong></div>
+                <div id="finale-msg" style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px; color: var(--gold-light); font-size: 14px; border: 1px solid var(--gold-dark); margin-bottom: 15px;"></div>
+                <button class="btn-final" onclick="Game.quitToCollection()">SELESAI & BUKA HADIAH</button>
             </div>
         </div>
 
@@ -427,9 +446,9 @@ const AudioSys = {
 };
 
 const Game = {
-    level: 1, tickets: 1, questionIndex: 0, currentQ: null, timeLeft: 30, timerInt: null, typeInt: null,
+    level: 1, tickets: 0, questionIndex: 0, currentQ: null, timeLeft: 30, timerInt: null, typeInt: null,
     lifelineTimeUsed: false, lifeline5050Used: false, lifelineSwapUsed: false, jumbleData: null,
-    // Diperpanjang menjadi 20 tingkat hadiah untuk menampung 20 soal per level
+    levelMistakes: 0, levelLifelines: 0, 
     prizeLadder: [100000, 200000, 300000, 500000, 1000000, 2000000, 3000000, 5000000, 10000000, 25000000, 50000000, 100000000, 200000000, 300000000, 500000000, 1000000000, 2000000000, 3000000000, 5000000000, 10000000000],
 
     init() {
@@ -441,7 +460,9 @@ const Game = {
         document.getElementById('view-home').classList.add('hidden');
         document.getElementById('view-quiz').classList.remove('hidden');
         document.getElementById('ui-level').classList.remove('hidden');
-        this.level = 1; this.resetLevelState();
+        this.level = 1; 
+        
+        this.resetLevelState();
     },
     resetLevelState() {
         this.lifelineTimeUsed = false; this.lifeline5050Used = false; this.lifelineSwapUsed = false;
@@ -449,7 +470,9 @@ const Game = {
         document.getElementById('life-5050').disabled = false;
         document.getElementById('life-swap').disabled = false;
         
-        // Memilih Bank Soal Berdasarkan Level
+        this.levelMistakes = 0; 
+        this.levelLifelines = 0;
+        
         let currentDB = dbQuestionsLevel1;
         if(this.level === 2) currentDB = dbQuestionsLevel2;
         else if(this.level === 3) currentDB = dbQuestionsLevel3;
@@ -541,6 +564,7 @@ const Game = {
             if (currentWord === this.jumbleData.target) {
                 slots.forEach(s => s.classList.add('correct')); AudioSys.correct(); setTimeout(() => this.correctRoutine(), 1500);
             } else {
+                this.levelMistakes++; 
                 slots.forEach(s => s.classList.add('wrong')); AudioSys.wrong(); setTimeout(() => { this.gameOver("JAWABAN SALAH", "Urutan huruf Anda kurang tepat.", 'lose'); }, 1200);
             }
         }
@@ -568,7 +592,11 @@ const Game = {
         clearInterval(this.timerInt); this.timeLeft = seconds; this.updateTimerUI();
         this.timerInt = setInterval(() => {
             this.timeLeft--; this.updateTimerUI();
-            if (this.timeLeft <= 0) { clearInterval(this.timerInt); AudioSys.timeout(); this.gameOver("WAKTU HABIS", "Sayang sekali waktu Anda telah habis.", 'lose'); }
+            if (this.timeLeft <= 0) { 
+                clearInterval(this.timerInt); AudioSys.timeout(); 
+                this.levelMistakes++; 
+                this.gameOver("WAKTU HABIS", "Sayang sekali waktu Anda telah habis.", 'lose'); 
+            }
         }, 1000);
     },
     updateTimerUI() {
@@ -585,6 +613,7 @@ const Game = {
         if (isCorrect) {
             clickedBtn.classList.add('correct'); AudioSys.correct(); setTimeout(() => this.correctRoutine(), 1500);
         } else {
+            this.levelMistakes++; 
             clickedBtn.classList.add('wrong'); AudioSys.wrong();
             let correctBtnId = (this.currentQ.type === 'boolean') ? (this.currentQ.a ? 'ans-true' : 'ans-false') : `ans-${this.currentQ.a}`;
             document.getElementById(correctBtnId).classList.add('correct');
@@ -597,17 +626,45 @@ const Game = {
         else { this.winLevel(); }
     },
     winLevel() {
-        let ticketReward = this.level; this.tickets += ticketReward; this.init();
-        this.gameOver("ALHAMDULILLAH!", `Luar biasa! Anda menyelesaikan Level ${this.level}.\nHadiah: ${ticketReward} Tiket.`, 'win');
+        let ticketReward = 1;
+        let extraMsg = "";
+
+        if (this.levelMistakes === 0 && this.levelLifelines === 0) {
+            ticketReward = 3;
+            extraMsg = "🌟 SEMPURNA! 🌟<br>Selesai tanpa salah & tanpa bantuan!";
+        } else if (this.levelMistakes === 0 && this.levelLifelines > 0) {
+            ticketReward = 2;
+            extraMsg = "✨ HEBAT! ✨<br>Selesai tanpa salah (menggunakan bantuan).";
+        } else {
+            ticketReward = 1;
+            extraMsg = "👍 BAGUS! 👍<br>Selesai walau sempat salah/kehabisan waktu.";
+        }
+
+        this.tickets += ticketReward; 
+        this.init();
+
+        if (this.level >= 4) {
+            this.showGrandFinale(ticketReward, extraMsg);
+        } else {
+            this.gameOver("ALHAMDULILLAH!", `Luar biasa! Anda menyelesaikan Level ${this.level}.\nHadiah: ${ticketReward} Tiket.\n\n${extraMsg.replace(/<br>/g, '\n')}`, 'win');
+        }
+    },
+    showGrandFinale(tickets, msg) {
+        AudioSys.correct(); // Mainkan efek suara berhasil
+        document.getElementById('finale-msg').innerHTML = msg + `<br><br><b style="font-size:18px; color:white;">Total Tiket Didapat: ${tickets}</b>`;
+        UI.openModal('modal-finale');
     },
     nextLevel() { AudioSys.click(); UI.closeModal(); this.level++; this.init(); this.resetLevelState(); },
     addTime() {
         if (this.lifelineTimeUsed) return;
-        AudioSys.click(); this.lifelineTimeUsed = true; document.getElementById('life-time').disabled = true; this.startTimer(this.timeLeft + 15);
+        AudioSys.click(); this.lifelineTimeUsed = true; document.getElementById('life-time').disabled = true; 
+        this.levelLifelines++; 
+        this.startTimer(this.timeLeft + 15);
     },
     use5050() {
         if (this.lifeline5050Used || this.currentQ.type !== 'multiple') return;
         AudioSys.click(); this.lifeline5050Used = true; document.getElementById('life-5050').disabled = true;
+        this.levelLifelines++; 
         let wrongIndexes = [];
         this.currentQ.options.forEach((opt, idx) => { if (idx !== this.currentQ.a) wrongIndexes.push(idx); });
         wrongIndexes.sort(() => 0.5 - Math.random());
@@ -617,6 +674,7 @@ const Game = {
     swapQuestion() {
         if (this.lifelineSwapUsed) return;
         AudioSys.click(); this.lifelineSwapUsed = true; document.getElementById('life-swap').disabled = true;
+        this.levelLifelines++; 
         this.questions.push(this.questions[this.questionIndex]); this.questions.splice(this.questionIndex, 1); this.loadQuestion();
     },
     gameOver(title, msg, state) {
@@ -628,6 +686,9 @@ const Game = {
 
         document.getElementById('end-msg').innerText = msg;
         const btn1 = document.getElementById('btn-action-1'); const btn2 = document.getElementById('btn-action-2');
+        
+        btn2.style.display = 'block'; // Pastikan tombol menyerah tampil
+
         if (state === 'win') {
             btn1.innerText = "Lanjut Level Berikutnya"; btn1.className = "btn-action btn-continue"; btn1.onclick = () => Game.nextLevel();
             btn2.innerText = "Selesai & Simpan"; btn2.className = "btn-action btn-neutral"; btn2.onclick = () => Game.quit();
@@ -651,6 +712,10 @@ const Game = {
         AudioSys.click(); UI.closeModal(); document.getElementById('view-quiz').classList.add('hidden');
         document.getElementById('ui-level').classList.add('hidden'); document.getElementById('view-home').classList.remove('hidden');
         clearInterval(this.timerInt); clearInterval(this.typeInt);
+    },
+    quitToCollection() {
+        this.quit(); // Keluar dan kembali ke menu utama
+        UI.openModal('modal-shop'); // Otomatis membuka menu tiket hadiah agar pemain bisa menukar hadiahnya
     },
     gacha() {
         AudioSys.click();
