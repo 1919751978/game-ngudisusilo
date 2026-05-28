@@ -35,9 +35,10 @@
         .ticket-count { font-weight: bold; color: var(--gold-light); font-size: 16px; }
         .level-hud { position: absolute; top: 15px; left: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--gold-dark); border-radius: 20px; padding: 5px 15px; z-index: 20; font-weight: bold; color: var(--gold-light); font-size: 14px; }
 
-        /* TOMBOL ATAS DI BERANDA (MUTE & BERHENTI) */
+        /* TOMBOL ATAS DI BERANDA (MUTE) */
         .btn-mute-home { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-dark); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--gold-light); font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 20; }
-        .btn-stop-home { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: linear-gradient(to bottom, #cb2d3e, #ef473a); border: 2px solid #fff; border-radius: 20px; padding: 6px 15px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 20; }
+        .btn-stop-home { background: linear-gradient(to bottom, #cb2d3e, #ef473a); border: 2px solid #fff; border-radius: 20px; padding: 8px 25px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.5); margin-bottom: 15px; transition: transform 0.1s; }
+        .btn-stop-home:active { transform: scale(0.95); }
 
         /* BERANDA */
         #view-home { flex: 1; justify-content: space-between; align-items: center; padding: 40px 20px 20px 20px; }
@@ -49,7 +50,8 @@
         .logo-title { font-size: 28px; letter-spacing: 1px; line-height: 1.1; margin-bottom: 5px; }
         .logo-subtitle { font-size: 12px; color: #fff; background: #900; padding: 4px 12px; border-radius: 10px; border: 1px solid var(--gold-main); text-transform: uppercase; font-weight: bold; }
         .logo-icon { width: 40px; height: 40px; background: var(--gold-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #000; font-weight: bold; font-size: 20px;}
-        .btn-play-container { width: 100%; display: flex; justify-content: center; margin-top: 30px;}
+        .action-group { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .btn-play-container { width: 100%; display: flex; justify-content: center; }
         .btn-play { background: linear-gradient(to bottom, var(--btn-blue-top), var(--btn-blue-bot)); border: 3px solid var(--gold-main); border-radius: 30px; padding: 15px 60px; font-size: 26px; font-weight: 900; color: var(--gold-light); text-shadow: 1px 2px 2px #000; cursor: pointer; box-shadow: 0 8px 0 var(--gold-dark), 0 10px 20px rgba(0,0,0,0.7); transition: all 0.1s; display: flex; align-items: center; gap: 10px; }
         .btn-play:active { transform: translateY(5px); box-shadow: 0 3px 0 var(--gold-dark), 0 5px 10px rgba(0,0,0,0.7); }
         .bottom-nav { width: 100%; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px;}
@@ -160,8 +162,6 @@
     <div id="view-home" class="flex-col z-10">
         <!-- TOMBOL KIRI ATAS: MUTE SOUND -->
         <button id="btn-mute" class="btn-mute-home" onclick="AudioSys.toggleMute()">🔊</button>
-        <!-- TOMBOL TENGAH ATAS: BERHENTI (Tampil Setelah Main) -->
-        <button id="btn-stop" class="btn-stop-home hidden" onclick="Game.stopCompletely()">BERHENTI</button>
 
         <div class="logo-container">
             <div class="logo-circle">
@@ -173,10 +173,15 @@
             <div style="margin-top: 5px; font-size: 11px; color: #00d2ff; letter-spacing: 1px; font-weight: bold;">Created by fkdtdukuhturi.web.id</div>
         </div>
 
-        <div class="btn-play-container" id="ui-play-area">
-            <button class="btn-play" onclick="Game.start()">
-                <span style="color: #4CAF50;">▶</span> MAIN
-            </button>
+        <div class="action-group">
+            <!-- TOMBOL BERHENTI -->
+            <button id="btn-stop" class="btn-stop-home hidden" onclick="Game.stopCompletely()">BERHENTI</button>
+            
+            <div class="btn-play-container" id="ui-play-area">
+                <button class="btn-play" onclick="Game.start()">
+                    <span style="color: #4CAF50;">▶</span> MAIN
+                </button>
+            </div>
         </div>
 
         <div class="bottom-nav">
