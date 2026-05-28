@@ -22,6 +22,7 @@
 
         .stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)), radial-gradient(1.5px 1.5px at 80px 70px, var(--gold-light), rgba(0,0,0,0)), radial-gradient(2px 2px at 150px 150px, #fff, rgba(0,0,0,0)), radial-gradient(1px 1px at 250px 90px, var(--gold-main), rgba(0,0,0,0)), radial-gradient(2px 2px at 300px 250px, #fff, rgba(0,0,0,0)), radial-gradient(1.5px 1.5px at 40px 400px, var(--gold-light), rgba(0,0,0,0)), radial-gradient(1px 1px at 350px 500px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 400px 600px; opacity: 0.6; z-index: 0; animation: twinkle 5s linear infinite alternate; }
         @keyframes twinkle { 0% { opacity: 0.4; transform: translateY(0); } 100% { opacity: 0.8; transform: translateY(-10px); } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
 
         .z-10 { z-index: 10; position: relative; }
         .hidden { display: none !important; }
@@ -33,6 +34,10 @@
         .top-hud svg { width: 24px; height: 24px; fill: var(--gold-light); }
         .ticket-count { font-weight: bold; color: var(--gold-light); font-size: 16px; }
         .level-hud { position: absolute; top: 15px; left: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--gold-dark); border-radius: 20px; padding: 5px 15px; z-index: 20; font-weight: bold; color: var(--gold-light); font-size: 14px; }
+
+        /* TOMBOL ATAS DI BERANDA (MUTE & BERHENTI) */
+        .btn-mute-home { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-dark); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--gold-light); font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 20; }
+        .btn-stop-home { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: linear-gradient(to bottom, #cb2d3e, #ef473a); border: 2px solid #fff; border-radius: 20px; padding: 6px 15px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 20; }
 
         /* BERANDA */
         #view-home { flex: 1; justify-content: space-between; align-items: center; padding: 40px 20px 20px 20px; }
@@ -153,6 +158,11 @@
 
     <!-- LAYAR: BERANDA -->
     <div id="view-home" class="flex-col z-10">
+        <!-- TOMBOL KIRI ATAS: MUTE SOUND -->
+        <button id="btn-mute" class="btn-mute-home" onclick="AudioSys.toggleMute()">🔊</button>
+        <!-- TOMBOL TENGAH ATAS: BERHENTI (Tampil Setelah Main) -->
+        <button id="btn-stop" class="btn-stop-home hidden" onclick="Game.stopCompletely()">BERHENTI</button>
+
         <div class="logo-container">
             <div class="logo-circle">
                 <div class="logo-icon">Rp</div>
@@ -163,7 +173,7 @@
             <div style="margin-top: 5px; font-size: 11px; color: #00d2ff; letter-spacing: 1px; font-weight: bold;">Created by fkdtdukuhturi.web.id</div>
         </div>
 
-        <div class="btn-play-container">
+        <div class="btn-play-container" id="ui-play-area">
             <button class="btn-play" onclick="Game.start()">
                 <span style="color: #4CAF50;">▶</span> MAIN
             </button>
@@ -240,6 +250,11 @@
             <div class="modal-footer">
                 <button class="btn-modal" style="background: linear-gradient(to bottom, #d4af37, #8a6327);" onclick="Game.gacha()">DAPATKAN HADIAH</button>
                 <button class="btn-modal" style="background: #333; margin-left: 10px;" onclick="UI.closeModal()">TUTUP</button>
+            </div>
+            
+            <!-- PERINGATAN JIKA TIKET KOSONG (Warna Merah Menyala) -->
+            <div id="gacha-warning" class="hidden" style="background-color: #ff0000; color: #ffffff; text-align: center; padding: 12px; margin: 0 20px 20px 20px; border-radius: 10px; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,0,0.9); border: 2px solid #fff; animation: popIn 0.3s ease-out;">
+                Anda belum mendapatkan tiket hadiah, silakan main dahulu.
             </div>
         </div>
 
@@ -398,7 +413,7 @@ const dbCollection = [
 ];
 
 const AudioSys = {
-    sfxVol: 0.8, bgmVol: 0.5, bgmElement: null, ctx: null,
+    sfxVol: 0.8, bgmVol: 0.5, bgmElement: null, ctx: null, isMuted: false,
     init() {
         try {
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -408,7 +423,19 @@ const AudioSys = {
             if (this.bgmElement) this.bgmElement.volume = this.bgmVol;
         } catch(e) { console.warn("Sistem audio ditahan peramban."); }
     },
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        const btn = document.getElementById('btn-mute');
+        if (this.isMuted) {
+            if (this.bgmElement) this.bgmElement.pause();
+            if (btn) btn.innerText = "🔇";
+        } else {
+            if (this.bgmElement) this.bgmElement.play().catch(e => {});
+            if (btn) btn.innerText = "🔊";
+        }
+    },
     playTone(freq, type, duration) {
+        if (this.isMuted) return;
         try {
             if (!this.ctx) this.init();
             if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
@@ -432,6 +459,7 @@ const AudioSys = {
     wrong() { this.playTone(300, 'sawtooth', 0.3); setTimeout(() => this.playTone(200, 'sawtooth', 0.4), 150); },
     timeout() { this.playTone(400, 'square', 0.5); setTimeout(() => this.playTone(400, 'square', 0.5), 600); },
     playBGM() {
+        if (this.isMuted) return;
         if(!this.bgmElement) this.bgmElement = document.getElementById('bgm');
         if(this.bgmElement) {
             this.bgmElement.volume = this.bgmVol;
@@ -448,7 +476,7 @@ const AudioSys = {
 const Game = {
     level: 1, tickets: 0, questionIndex: 0, currentQ: null, timeLeft: 30, timerInt: null, typeInt: null,
     lifelineTimeUsed: false, lifeline5050Used: false, lifelineSwapUsed: false, jumbleData: null,
-    levelMistakes: 0, levelLifelines: 0, 
+    levelMistakes: 0, levelLifelines: 0, hasPlayed: false,
     prizeLadder: [100000, 200000, 300000, 500000, 1000000, 2000000, 3000000, 5000000, 10000000, 25000000, 50000000, 100000000, 200000000, 300000000, 500000000, 1000000000, 2000000000, 3000000000, 5000000000, 10000000000],
 
     init() {
@@ -463,6 +491,24 @@ const Game = {
         this.level = 1; 
         
         this.resetLevelState();
+    },
+    stopCompletely() {
+        // Logika untuk menghentikan seluruh game secara paksa
+        AudioSys.isMuted = true;
+        if (AudioSys.bgmElement) AudioSys.bgmElement.pause();
+        const btnMute = document.getElementById('btn-mute');
+        if (btnMute) btnMute.innerText = "🔇";
+        
+        const playContainer = document.getElementById('ui-play-area');
+        if (playContainer) {
+            playContainer.innerHTML = `
+            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff3333; padding: 15px; border-radius: 15px; color: #fff; text-align: center; width: 90%; max-width: 300px; margin: 0 auto; box-shadow: 0 5px 15px rgba(255,0,0,0.4);">
+                <div style="font-size: 16px; color: #ff3333; margin-bottom: 8px; font-weight: bold;">🛑 PERMAINAN DIHENTIKAN</div>
+                <div style="font-size: 12px; margin-bottom: 15px; color: #ccc;">Terima kasih telah bermain.</div>
+                <button onclick="location.reload()" style="background: linear-gradient(to bottom, #11998e, #38ef7d); border: 2px solid #fff; border-radius: 20px; padding: 10px 25px; color: #fff; font-weight: bold; font-size: 14px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.5);">MAIN KEMBALI</button>
+            </div>`;
+        }
+        document.getElementById('btn-stop').classList.add('hidden');
     },
     resetLevelState() {
         this.lifelineTimeUsed = false; this.lifeline5050Used = false; this.lifelineSwapUsed = false;
@@ -650,7 +696,7 @@ const Game = {
         }
     },
     showGrandFinale(tickets, msg) {
-        AudioSys.correct(); // Mainkan efek suara berhasil
+        AudioSys.correct();
         document.getElementById('finale-msg').innerHTML = msg + `<br><br><b style="font-size:18px; color:white;">Total Tiket Didapat: ${tickets}</b>`;
         UI.openModal('modal-finale');
     },
@@ -687,7 +733,7 @@ const Game = {
         document.getElementById('end-msg').innerText = msg;
         const btn1 = document.getElementById('btn-action-1'); const btn2 = document.getElementById('btn-action-2');
         
-        btn2.style.display = 'block'; // Pastikan tombol menyerah tampil
+        btn2.style.display = 'block';
 
         if (state === 'win') {
             btn1.innerText = "Lanjut Level Berikutnya"; btn1.className = "btn-action btn-continue"; btn1.onclick = () => Game.nextLevel();
@@ -712,14 +758,25 @@ const Game = {
         AudioSys.click(); UI.closeModal(); document.getElementById('view-quiz').classList.add('hidden');
         document.getElementById('ui-level').classList.add('hidden'); document.getElementById('view-home').classList.remove('hidden');
         clearInterval(this.timerInt); clearInterval(this.typeInt);
+        
+        this.hasPlayed = true;
+        document.getElementById('btn-stop').classList.remove('hidden'); // Munculkan tombol BERHENTI setelah main
     },
     quitToCollection() {
-        this.quit(); // Keluar dan kembali ke menu utama
-        UI.openModal('modal-shop'); // Otomatis membuka menu tiket hadiah agar pemain bisa menukar hadiahnya
+        this.quit(); 
+        UI.openModal('modal-shop'); 
     },
     gacha() {
         AudioSys.click();
-        if (this.tickets < 1) { alert("Anda belum mendapatkan tiket hadiah, silakan main dahulu."); return; }
+        if (this.tickets < 1) { 
+            // Ubah alert menjadi notifikasi (toast)
+            const warningBox = document.getElementById('gacha-warning');
+            warningBox.classList.remove('hidden');
+            setTimeout(() => {
+                warningBox.classList.add('hidden');
+            }, 3000); // Hilang dalam 3 detik
+            return; 
+        }
         
         const prizeOrder = [6, 11, 0, 5, 10, 8, 9, 7, 4, 1, 2, 3]; 
         let unlockedItem = null;
@@ -757,6 +814,8 @@ const UI = {
     closeModal() {
         try { AudioSys.click(); } catch(e) {}
         document.getElementById('modal-overlay').classList.add('hidden');
+        // Pastikan peringatan gacha ditutup kalau user klik tombol Tutup terlalu cepat
+        document.getElementById('gacha-warning').classList.add('hidden');
     },
     switchTab(tabIndex) {
         try { AudioSys.click(); } catch(e) {}
