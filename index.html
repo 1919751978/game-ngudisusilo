@@ -98,6 +98,23 @@
         .btn-lifeline { flex: 1; background: linear-gradient(to bottom, #d4af37, #8a6327); border: 1px solid var(--gold-light); color: #fff; padding: 10px 5px; border-radius: 10px; font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; text-align: center; }
         .btn-lifeline:disabled { background: #555; border-color: #444; color: #888; box-shadow: none; text-shadow: none;}
 
+        /* ANIMASI SKOR */
+        .score-popup {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3.5rem; font-weight: 900;
+            color: var(--gold-light);
+            text-shadow: 0 0 20px var(--gold-main), 3px 3px 10px #000;
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            background: rgba(0,0,0,0.7);
+            padding: 20px 40px;
+            border-radius: 20px;
+            border: 3px solid var(--gold-main);
+        }
+        .score-popup.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
         /* MODAL POP-UP */
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: flex-start; z-index: 50; padding: 40px 0; overflow-y: auto; }
         .modal-box { width: 90%; max-width: 350px; background: #150f24; border: 3px solid var(--gold-main); border-radius: 15px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(255, 215, 0, 0.1); position: relative; margin: auto; }
@@ -120,7 +137,7 @@
         .tab-btn { flex: 1; padding: 8px 5px; background: #440000; color: #fff; border: 1px solid var(--gold-main); font-size: 10px; font-weight: bold; border-radius: 5px; cursor: pointer; text-align: center;}
         .tab-btn.active { background: #004400; border-color: #00ff00; }
         .collection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 250px; align-content: start; }
-        .col-item { background: #2a2a35; border: 1px solid #555; border-radius: 10px; height: 90px; display: flex; justify-content: center; align-items: center; position: relative; }
+        .col-item { background: #2a2a35; border: 1px solid #555; border-radius: 10px; height: 90px; display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; overflow: hidden; }
         .col-item.unlocked { border-color: var(--gold-main); background: #112; box-shadow: inset 0 0 15px rgba(212,175,55,0.2); }
         .col-icon { font-size: 40px; filter: brightness(0); opacity: 0.5; transition: all 0.3s;}
         .col-item.unlocked .col-icon { filter: brightness(1); opacity: 1; }
@@ -145,9 +162,6 @@
     </style>
 </head>
 <body>
-
-<!-- MUSIK SHOLAWAT DARI DROPBOX -->
-<audio id="bgm" src="https://dl.dropboxusercontent.com/scl/fi/y5ur5oi4qzew9yjt6ws5z/SHOLAWAT-JIBRIL-NISSA-SABYAN.mp3?rlkey=fub1prwdldhmuivcneppa4bqc&st=9n0qmku5&dl=0" loop preload="auto"></audio>
 
 <div class="app-container">
     <div class="stars"></div>
@@ -223,6 +237,12 @@
         </div>
     </div>
 
+    <!-- POPUP SKOR MUNCUL TENGAH LAYAR -->
+    <div id="ui-score-popup" class="score-popup">Rp 0</div>
+
+    <!-- TOAST NOTIFICATION (PENGGANTI ALERT) -->
+    <div id="ui-toast" class="hidden" style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(15, 10, 30, 0.95); border: 2px solid var(--gold-main); color: #fff; padding: 12px 20px; border-radius: 15px; text-align: center; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.8); font-size: 14px; width: 80%; max-width: 320px; pointer-events: none; font-weight: bold; animation: popIn 0.2s ease-out;"></div>
+
     <!-- OVERLAY MODAL -->
     <div id="modal-overlay" class="modal-overlay hidden">
         
@@ -231,11 +251,7 @@
             <div class="modal-header header-default">⚙️ PENGATURAN</div>
             <div class="modal-content">
                 <div class="setting-row">
-                    <div class="setting-label"><span>MUSIK</span> <span>🎵</span></div>
-                    <input type="range" min="0" max="100" value="50" class="slider" id="music-slider" oninput="AudioSys.setMusicVolume(this.value)">
-                </div>
-                <div class="setting-row">
-                    <div class="setting-label"><span>SOUND EFFECT</span> <span>🔊</span></div>
+                    <div class="setting-label"><span>VOLUME SUARA</span> <span>🔊</span></div>
                     <input type="range" min="0" max="100" value="80" class="slider" id="sfx-slider" oninput="AudioSys.setSfxVolume(this.value)">
                 </div>
             </div>
@@ -257,7 +273,7 @@
                 <button class="btn-modal" style="background: #333; margin-left: 10px;" onclick="UI.closeModal()">TUTUP</button>
             </div>
             
-            <!-- PERINGATAN JIKA TIKET KOSONG (Warna Merah Menyala) -->
+            <!-- PERINGATAN JIKA TIKET KOSONG -->
             <div id="gacha-warning" class="hidden" style="background-color: #ff0000; color: #ffffff; text-align: center; padding: 12px; margin: 0 20px 20px 20px; border-radius: 10px; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,0,0.9); border: 2px solid #fff; animation: popIn 0.3s ease-out;">
                 Anda belum mendapatkan tiket hadiah, silakan main dahulu.
             </div>
@@ -305,7 +321,7 @@
 </div>
 
 <script>
-// --- BANK SOAL LEVEL 1 (20 Soal) ---
+// --- BANK SOAL LEVEL 1-4 ---
 const dbQuestionsLevel1 = [
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEje2ffHc76hv80eULiOBXqJqaDH4H_LjQ7PXK6Efw1fKXWa7sveR6zDrQAWr5Osm9qu9RvGdY1nxggRxLf06A46aLxVf1N-gGq9mL_xPPZfB5Yhj6lhDlV-wT3FAISYrlsbhSZPDjvOOt4pVnsGmboVrlZ6HL8_uaCoJai5Xezo9kXxNrnf_lox5TyhsKY/s320/1.1.%20anakmembantuibunya.webp', q: "Jika ibu bapak sedang repot, kita harus...", options: ["A. Pura-pura tidur", "B. Rajin membantu", "C. Pergi bermain", "D. Meminta uang"], a: 1 },
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg1LWIQLUHDPYOV1ggdUG2YSuJ40DqgVOPdjDlsia9jZNi7dOUtoJwgRj9CqEIglVReNnbpHc_uLzoRrJvsHLLDGtkLiv0H3mLLM6f954jgYr52PnCAx-1_TAEBy4AivTFxpgmlyKb8d21hVxPzxqLD4F7h-fYPBIzjvjaln220RwqMnO0D3JB5AgPwKAA/s320/1.2%20masjidsubu.jpeg', q: "Jika kenthong subuh sudah berbunyi, hal pertama yang harus kita lakukan adalah...", options: ["A. Melanjutkan tidur", "B. Menonton TV", "C. Segera bangun dan mandi", "D. Menunggu dibangunkan"], a: 2 },
@@ -328,8 +344,6 @@ const dbQuestionsLevel1 = [
     { type: 'multiple', q: "Jika tidak ada pekerjaan di rumah, hal terbaik yang bisa dilakukan adalah...", options: ["A. Membaca Al-Qur'an meskipun sedikit", "B. Tidur seharian", "C. Mengganggu adik", "D. Mengeluh bosan"], a: 0 },
     { type: 'multiple', q: "Tujuan utama diajarkannya kitab Ngudi Susilo adalah...", options: ["A. Agar anak menjadi kaya", "B. Menjauhkan tingkah laku tak terpuji dan menuntun ke surga", "C. Agar bisa pamer di sekolah", "D. Untuk menghafal bahasa Jawa saja"], a: 1 }
 ];
-
-// --- BANK SOAL LEVEL 2 (20 Soal) ---
 const dbQuestionsLevel2 = [
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjbGqxg8TkCHz_gGHaudgLxdQbl8G8ArYQ56d7p0IJkAGfxJidZMrj1Y92xwqBWudEjGGPfHfLpadwFOKqewD5MAM_2MOaqwh8BN9oDklmkNFVlOFUVOyA29HzgdAIdGb7Ahb_s_725AXjqnZih-yIejZNe7tp3q6Uvx879bJDU2I8sr9rpdvjOspTC-WE/s320/2.1%20belajardikela.jpeg', q: "Menurut Ngudi Susilo, di dalam kelas kita dilarang...", options: ["A. Bertanya pada guru", "B. Mencatat pelajaran", "C. Mengantuk dan bersendau gurau berlebihan", "D. Membaca buku teks"], a: 2 },
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEheM_fAi9vf2Ww9q5YZNkhyphenhyphenEsOXlNEvZC-l2i5As_P3HSimha83zsYiX9TkmMHS3fI_xJ3rL3N22ytpBk-OExmF7rIcosmQqLZyCrJzlbsS9rgtucjuFzoQMdsztIpuQ2YJnVdHOerC6DeSL0-0FNHskOmZA7wEOfg-VVez-iNV-8uTxLL4XWcAlnBbJ04/s320/2.2.%20Berangkatsekola.jpeg', q: "Saat hendak berangkat sekolah, kita harus mempersiapkan diri dengan...", options: ["A. Rajin, rapi, dan bersih", "B. Terburu-buru", "C. Memakai pakaian kotor", "D. Membawa mainan"], a: 0 },
@@ -352,8 +366,6 @@ const dbQuestionsLevel2 = [
     { type: 'multiple', q: "Seorang yang masih muda harus memiliki sikap...", options: ["A. Ingin selalu dihormati", "B. Merasa tahu segalanya", "C. Menghargai dan menghormati orang yang lebih tua", "D. Tidak mau dinasihati"], a: 2 },
     { type: 'multiple', q: "Jika kita membaca saat orang tua sedang tidur, maka suara kita...", options: ["A. Dikeraskan agar orang tua bangga", "B. Dipelankan dengan suara lembut", "C. Direkam dan diputar keras", "D. Biasa saja"], a: 1 }
 ];
-
-// --- BANK SOAL LEVEL 3 (20 Soal) ---
 const dbQuestionsLevel3 = [
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQxpPUgg8IIu-_O5T-SVA0sn5k0DafXzVM81TOAZlgSDcaBJgfI0UFL59j7f37q_WVaZ6bwte8pyqO19FiBUNpeouzLfhhGQNlS2V8Tx-4AMC1JI31tIIWW79Z3LBJZsZI2QBbW6GIYmzCtt_n8ItOOL1ffaCD0bIMZyy-YLEnUudSjWl3bY5ByjfEG3U/s320/3.1%20menerimatamu.webp', q: "Saat ada tamu, sikap anak yang benar adalah...", options: ["A. Mondar-mandir mencari perhatian", "B. Menangis minta uang", "C. Menjaga tingkah laku agar tetap sopan", "D. Ikut campur pembicaraan orang dewasa"], a: 2 },
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJ7vPYEF5BbzJUCsS31mnJ_RAPH5glX2Sm1ccJiGNnK6sfyL7x-exPF30H0gE_YxJZmK3aN-SnrajsJlmluqDgye1ucHJ8P0EO50beOK9KKwCYO-jI-UGvgxH_o43cFSe42gUSFFW5FXp862bFDmyORymGyG5tJnyNDJd6-aaDfrrfMGcq4iVM_sSL-3c/s320/3.2%20kayarayaberpangka.jpeg', q: "Jika orang tua kita kaya raya atau berpangkat, kita dilarang untuk...", options: ["A. Bersyukur", "B. Bersedekah", "C. Merasa sombong/hebat dari yang lain", "D. Berteman dengan orang biasa"], a: 2 },
@@ -376,8 +388,6 @@ const dbQuestionsLevel3 = [
     { type: 'multiple', q: "Sikap merasa paling pintar dan tidak ada yang menandingi akan membuat anak menjadi...", options: ["A. Dihormati guru", "B. Disukai banyak teman", "C. Tidak menghargai orang tua", "D. Cepat kaya"], a: 2 },
     { type: 'multiple', q: "Tujuan bersikap rendah hati bukan karena kita merasa lemah, melainkan sebagai wujud dari...", options: ["A. Ketakutan", "B. Kemiskinan", "C. Akhlak Islam yang merdeka", "D. Paksaan"], a: 2 }
 ];
-
-// --- BANK SOAL LEVEL 4 (20 Soal) ---
 const dbQuestionsLevel4 = [
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6QGAOWKosj0gL099MdtYLVdR5FTJrwPxRQEAb6AejbPZy-3y1a3LrZyhotmRwDAiKGf13W_qcYMkyvQCz0dOcWQCp5dIBXFNPas5K9DJNtAB7qJx8Z1pGHC4D1FQIu1fECJ5z_8SPlNTNjthLfA7tqHeM0ZfS731tfA5PgfjhdD4B-98wAqWTQ2dMuxo/s320/4.2%20pangerandiponegoro.webp', q: "Menurut syair, mengenakan sorban atau penutup kepala itu tidak kolot, buktinya dipakai oleh pahlawan bernama...", options: ["A. Pangeran Diponegoro & Imam Bonjol", "B. Jenderal Sudirman", "C. Soekarno", "D. Pattimura"], a: 0 },
     { type: 'multiple', image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjDQ9NFGeRWMfAZcY4eFd8s_LoQRJw8H2QBq95l3iKt1wkCPEPKR5GjB17Xp5ZhuxHZsCYGvsYRXfOFfbLUaQ6aEgbne4eMALYEvA-7YBwI8Y65gFa7PM0VNSXpEFy1rRf1yQnGODAO_JLO7z_5QCk40g0q5JoEOtxpWXq7YCjr_Dy7JF3FlE0xcnESf2A/s320/4.1%20dokterbekerja.webp', q: "Untuk mencapai profesi ini agar berkah, anak Islam harus membekali diri dengan ilmu umum dan...", options: ["A. Harta warisan", "B. Ilmu sihir", "C. Ilmu agama (penuntun laku benar)", "D. Koneksi orang dalam"], a: 2 },
@@ -417,28 +427,55 @@ const dbCollection = [
     { id: 11, cat: 2, icon: "☕", image: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjHBwIsQ5frXJWYQPJffZYWv2V2xx4deufXCynoSK3xQUdT2zc5YHfuJgin7vPnsPqFDmwdc-mYKRSAex3QQsX4vasyopYIsN5VdYgZ2HANIS4So5V-PohZWJgYajp7eaExeWSsSJ6N0wKV-xPlV_9K6R9I0c8drqapX2BCCur1RHpSDcwTYcCJw3-bBaA/w200-h200/mesin%20kopi.webp", name: "Mesin Kopi", unlocked: false }
 ];
 
+/* === SISTEM AUDIO === */
 const AudioSys = {
-    sfxVol: 0.8, bgmVol: 0.5, bgmElement: null, ctx: null, isMuted: false,
+    sfxVol: 0.8, isMuted: false, ctx: null,
+    sounds: {
+        intro: new Audio('https://www.dropbox.com/scl/fi/f5i7ow6xeq751ufauk2ge/Pendahuluan.mp3?rlkey=i53pv7f5185mtim8ybhq7whm0&st=ywhe8yux&raw=1'),
+        next_q: new Audio('https://www.dropbox.com/scl/fi/5nelolfggrqaljukoa7f1/Pakai-bantuan.mp3?rlkey=lton45c5di0keme6d587qavrk&st=zdtsyq4q&raw=1'), // Dipakai untuk tombol Soal Berikutnya
+        lifeline: new Audio('https://www.dropbox.com/scl/fi/bus6i7oq665w3nbna393e/Benar.mp3?rlkey=f3c1kb05ef9nlukqcd222tvyp&st=xqtq08gy&raw=1'), // Bekas suara Benar.mp3 dipakai untuk bantuan
+        gameover: new Audio('https://www.dropbox.com/scl/fi/x2s4yfv3hyp7eu3odu1q9/game-over.mp3?rlkey=beu8u3ijx7ptopf6vfqvsvu4n&st=ao01d7x3&raw=1'),
+        wrong: new Audio('https://www.dropbox.com/scl/fi/5pg5kdc6oiyux9wpilvf0/salah.mp3?rlkey=ckz51ug8lllunqoc6swozilkl&st=3crerjpf&raw=1'),
+        finish: new Audio('https://www.dropbox.com/scl/fi/jnooupig3ztjujj7ufh80/Selesai-game.mp3?rlkey=g1opmw2y19a76b7wg0x1k87n5&st=vc10gaaz&raw=1'),
+        score: new Audio('https://www.dropbox.com/scl/fi/ctc2e9kx4zbwez8863sjd/skor.mp3?rlkey=11g4uo95rj3s5mui7vxwj3hip&st=p5u70cfr&raw=1')
+    },
     init() {
         try {
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!this.ctx) this.ctx = new window.AudioContext();
             if (this.ctx.state === 'suspended') this.ctx.resume();
-            this.bgmElement = document.getElementById('bgm');
-            if (this.bgmElement) this.bgmElement.volume = this.bgmVol;
-        } catch(e) { console.warn("Sistem audio ditahan peramban."); }
+        } catch(e) {}
     },
     toggleMute() {
         this.isMuted = !this.isMuted;
         const btn = document.getElementById('btn-mute');
         if (this.isMuted) {
-            if (this.bgmElement) this.bgmElement.pause();
+            this.stopAll();
             if (btn) btn.innerText = "🔇";
         } else {
-            if (this.bgmElement) this.bgmElement.play().catch(e => {});
             if (btn) btn.innerText = "🔊";
         }
     },
+    playSound(name) {
+        if (this.isMuted) return;
+        const snd = this.sounds[name];
+        if (snd) {
+            snd.currentTime = 0;
+            snd.volume = this.sfxVol;
+            snd.play().catch(e => console.warn("Audio blocked by browser."));
+        }
+    },
+    stopAll() {
+        for (let key in this.sounds) {
+            this.sounds[key].pause();
+            this.sounds[key].currentTime = 0;
+        }
+    },
+    setSfxVolume(val) {
+        this.sfxVol = val / 100;
+        for (let key in this.sounds) { this.sounds[key].volume = this.sfxVol; }
+    },
+    // Suara ketikan teks dan tombol kecil (Sintesis)
     playTone(freq, type, duration) {
         if (this.isMuted) return;
         try {
@@ -449,7 +486,7 @@ const AudioSys = {
             const gain = this.ctx.createGain();
             osc.type = type;
             osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-            const safeVol = Math.max(this.sfxVol, 0.01);
+            const safeVol = Math.max(this.sfxVol - 0.2, 0.01); // Ketikan lebih pelan
             gain.gain.setValueAtTime(safeVol, this.ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
             osc.connect(gain);
@@ -459,23 +496,7 @@ const AudioSys = {
         } catch(e) {}
     },
     click() { this.playTone(800, 'sine', 0.1); },
-    type() { this.playTone(1500, 'square', 0.02); },
-    correct() { this.playTone(523.25, 'sine', 0.1); setTimeout(() => this.playTone(659.25, 'sine', 0.1), 100); setTimeout(() => this.playTone(783.99, 'sine', 0.3), 200); },
-    wrong() { this.playTone(300, 'sawtooth', 0.3); setTimeout(() => this.playTone(200, 'sawtooth', 0.4), 150); },
-    timeout() { this.playTone(400, 'square', 0.5); setTimeout(() => this.playTone(400, 'square', 0.5), 600); },
-    playBGM() {
-        if (this.isMuted) return;
-        if(!this.bgmElement) this.bgmElement = document.getElementById('bgm');
-        if(this.bgmElement) {
-            this.bgmElement.volume = this.bgmVol;
-            if(this.bgmElement.paused) {
-                const playPromise = this.bgmElement.play();
-                if (playPromise !== undefined) playPromise.catch(e => console.warn("BGM ditahan browser."));
-            }
-        }
-    },
-    setMusicVolume(val) { this.bgmVol = val / 100; if (this.bgmElement) this.bgmElement.volume = this.bgmVol; },
-    setSfxVolume(val) { this.sfxVol = val / 100; }
+    type() { this.playTone(1500, 'square', 0.02); }
 };
 
 const Game = {
@@ -489,18 +510,18 @@ const Game = {
         document.getElementById('ui-level').innerText = "Lv. " + this.level;
     },
     start() {
-        AudioSys.playBGM(); AudioSys.click();
+        AudioSys.stopAll(); 
+        AudioSys.playSound('intro'); // MAIN SOUND INTRO
+        
         document.getElementById('view-home').classList.add('hidden');
         document.getElementById('view-quiz').classList.remove('hidden');
         document.getElementById('ui-level').classList.remove('hidden');
         this.level = 1; 
-        
         this.resetLevelState();
     },
     stopCompletely() {
-        // Logika untuk menghentikan seluruh game secara paksa
+        AudioSys.stopAll();
         AudioSys.isMuted = true;
-        if (AudioSys.bgmElement) AudioSys.bgmElement.pause();
         const btnMute = document.getElementById('btn-mute');
         if (btnMute) btnMute.innerText = "🔇";
         
@@ -531,6 +552,36 @@ const Game = {
         
         this.questions = [...currentDB].sort(() => 0.5 - Math.random());
         this.questionIndex = 0;
+        this.prepareQuestion();
+    },
+    prepareQuestion() {
+        clearInterval(this.timerInt); clearInterval(this.typeInt);
+        this.timeLeft = 30; this.updateTimerUI(); // Reset visual timer ke 30
+        
+        let pAmt = this.prizeLadder[this.questionIndex] || (this.prizeLadder[this.prizeLadder.length-1] * 2);
+        document.getElementById('ui-prize-box').innerText = "Rp " + pAmt.toLocaleString('id-ID');
+
+        document.getElementById('ui-q-img-box').style.display = 'none';
+        document.getElementById('ui-question').innerHTML = '<span style="color:#888; font-style:italic; font-size:16px;">Bersiap untuk pertanyaan...</span>';
+        
+        const btnText = (this.questionIndex === 0) ? "MULAI SOAL" : "SOAL BERIKUTNYA";
+        document.getElementById('ui-answers').innerHTML = `
+            <div style="display:flex; justify-content:center; align-items:center; height:100%; margin-top:20px;">
+                <button class="btn-play" style="padding: 15px 40px; font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.8);" onclick="Game.triggerQuestion()">
+                    <span style="color: #4CAF50;">▶</span> ${btnText}
+                </button>
+            </div>
+        `;
+
+        // Matikan bantuan sampai tombol di-klik dan teks selesai diketik
+        document.getElementById('life-time').disabled = true;
+        document.getElementById('life-5050').disabled = true;
+        document.getElementById('life-swap').disabled = true;
+    },
+    triggerQuestion() {
+        // Menghentikan semua musik aktif (termasuk pendahuluan/intro) sebelum memutar musik soal baru
+        AudioSys.stopAll(); 
+        AudioSys.playSound('next_q'); // Memutar suara Pakai-bantuan.mp3
         this.loadQuestion();
     },
     loadQuestion() {
@@ -612,11 +663,27 @@ const Game = {
             const currentWord = this.jumbleData.slots.map(s => s.char).join('');
             clearInterval(this.timerInt);
             const slots = document.querySelectorAll('.jumble-slot');
+            
             if (currentWord === this.jumbleData.target) {
-                slots.forEach(s => s.classList.add('correct')); AudioSys.correct(); setTimeout(() => this.correctRoutine(), 1500);
+                slots.forEach(s => s.classList.add('correct')); 
+                
+                // Animasi Skor langsung (memutar skor.mp3)
+                const pAmt = this.prizeLadder[this.questionIndex] || (this.prizeLadder[this.prizeLadder.length-1] * 2);
+                Game.showScorePopup(pAmt);
+
+                setTimeout(() => { 
+                    Game.hideScorePopup();
+                    this.correctRoutine(); 
+                }, 2500); // Lanjut setelah animasi skor selesai
+
             } else {
                 this.levelMistakes++; 
-                slots.forEach(s => s.classList.add('wrong')); AudioSys.wrong(); setTimeout(() => { this.gameOver("JAWABAN SALAH", "Urutan huruf Anda kurang tepat.", 'lose'); }, 1200);
+                slots.forEach(s => s.classList.add('wrong')); 
+                AudioSys.playSound('wrong'); 
+                setTimeout(() => { 
+                    AudioSys.playSound('gameover');
+                    this.gameOver("JAWABAN SALAH", "Urutan huruf Anda kurang tepat.", 'lose'); 
+                }, 1500);
             }
         }
     },
@@ -635,6 +702,12 @@ const Game = {
                 document.getElementById('ui-answers').style.pointerEvents = 'auto';
                 const ansBtns = document.querySelectorAll('.btn-answer'); ansBtns.forEach(b => b.disabled = false);
                 btnsLifeline.forEach(b => b.style.pointerEvents = 'auto');
+                
+                // Aktifkan kembali bantuan yang belum terpakai
+                if (!this.lifelineTimeUsed) document.getElementById('life-time').disabled = false;
+                if (!this.lifeline5050Used && this.currentQ.type === 'multiple') document.getElementById('life-5050').disabled = false;
+                if (!this.lifelineSwapUsed) document.getElementById('life-swap').disabled = false;
+
                 this.startTimer(30);
             }
         }, 40); 
@@ -644,8 +717,9 @@ const Game = {
         this.timerInt = setInterval(() => {
             this.timeLeft--; this.updateTimerUI();
             if (this.timeLeft <= 0) { 
-                clearInterval(this.timerInt); AudioSys.timeout(); 
+                clearInterval(this.timerInt); 
                 this.levelMistakes++; 
+                AudioSys.playSound('gameover');
                 this.gameOver("WAKTU HABIS", "Sayang sekali waktu Anda telah habis.", 'lose'); 
             }
         }, 1000);
@@ -653,6 +727,16 @@ const Game = {
     updateTimerUI() {
         const tUI = document.getElementById('ui-timer'); tUI.innerText = this.timeLeft;
         if (this.timeLeft <= 5) tUI.classList.add('timer-danger'); else tUI.classList.remove('timer-danger');
+    },
+    showScorePopup(amount) {
+        AudioSys.playSound('score');
+        const popup = document.getElementById('ui-score-popup');
+        popup.innerText = "Rp " + amount.toLocaleString('id-ID');
+        popup.classList.add('show');
+    },
+    hideScorePopup() {
+        const popup = document.getElementById('ui-score-popup');
+        popup.classList.remove('show');
     },
     checkAnswer(userAns) {
         clearInterval(this.timerInt);
@@ -662,18 +746,33 @@ const Game = {
         const clickedBtn = document.getElementById(btnId);
 
         if (isCorrect) {
-            clickedBtn.classList.add('correct'); AudioSys.correct(); setTimeout(() => this.correctRoutine(), 1500);
+            clickedBtn.classList.add('correct'); 
+            
+            // Animasi Skor langsung (memutar skor.mp3)
+            const pAmt = this.prizeLadder[this.questionIndex] || (this.prizeLadder[this.prizeLadder.length-1] * 2);
+            Game.showScorePopup(pAmt);
+
+            setTimeout(() => { 
+                Game.hideScorePopup();
+                this.correctRoutine(); 
+            }, 2500); // Waktu animasi skor
+
         } else {
             this.levelMistakes++; 
-            clickedBtn.classList.add('wrong'); AudioSys.wrong();
+            clickedBtn.classList.add('wrong'); 
+            AudioSys.playSound('wrong');
             let correctBtnId = (this.currentQ.type === 'boolean') ? (this.currentQ.a ? 'ans-true' : 'ans-false') : `ans-${this.currentQ.a}`;
             document.getElementById(correctBtnId).classList.add('correct');
-            setTimeout(() => { this.gameOver("JAWABAN SALAH", "Pernyataan tersebut kurang tepat.", 'lose'); }, 1200);
+            
+            setTimeout(() => { 
+                AudioSys.playSound('gameover');
+                this.gameOver("JAWABAN SALAH", "Pernyataan tersebut kurang tepat.", 'lose'); 
+            }, 1500);
         }
     },
     correctRoutine() {
         this.questionIndex++;
-        if (this.questionIndex < this.questions.length) { this.loadQuestion(); } 
+        if (this.questionIndex < this.questions.length) { this.prepareQuestion(); } 
         else { this.winLevel(); }
     },
     winLevel() {
@@ -695,26 +794,26 @@ const Game = {
         this.init();
 
         if (this.level >= 4) {
+            AudioSys.playSound('finish');
             this.showGrandFinale(ticketReward, extraMsg);
         } else {
             this.gameOver("ALHAMDULILLAH!", `Luar biasa! Anda menyelesaikan Level ${this.level}.\nHadiah: ${ticketReward} Tiket.\n\n${extraMsg.replace(/<br>/g, '\n')}`, 'win');
         }
     },
     showGrandFinale(tickets, msg) {
-        AudioSys.correct();
         document.getElementById('finale-msg').innerHTML = msg + `<br><br><b style="font-size:18px; color:white;">Total Tiket Didapat: ${tickets}</b>`;
         UI.openModal('modal-finale');
     },
     nextLevel() { AudioSys.click(); UI.closeModal(); this.level++; this.init(); this.resetLevelState(); },
     addTime() {
         if (this.lifelineTimeUsed) return;
-        AudioSys.click(); this.lifelineTimeUsed = true; document.getElementById('life-time').disabled = true; 
+        AudioSys.playSound('lifeline'); this.lifelineTimeUsed = true; document.getElementById('life-time').disabled = true; 
         this.levelLifelines++; 
         this.startTimer(this.timeLeft + 15);
     },
     use5050() {
         if (this.lifeline5050Used || this.currentQ.type !== 'multiple') return;
-        AudioSys.click(); this.lifeline5050Used = true; document.getElementById('life-5050').disabled = true;
+        AudioSys.playSound('lifeline'); this.lifeline5050Used = true; document.getElementById('life-5050').disabled = true;
         this.levelLifelines++; 
         let wrongIndexes = [];
         this.currentQ.options.forEach((opt, idx) => { if (idx !== this.currentQ.a) wrongIndexes.push(idx); });
@@ -724,7 +823,7 @@ const Game = {
     },
     swapQuestion() {
         if (this.lifelineSwapUsed) return;
-        AudioSys.click(); this.lifelineSwapUsed = true; document.getElementById('life-swap').disabled = true;
+        AudioSys.playSound('lifeline'); this.lifelineSwapUsed = true; document.getElementById('life-swap').disabled = true;
         this.levelLifelines++; 
         this.questions.push(this.questions[this.questionIndex]); this.questions.splice(this.questionIndex, 1); this.loadQuestion();
     },
@@ -733,7 +832,7 @@ const Game = {
         header.className = 'modal-header';
         if (state === 'lose') header.classList.add('header-lose');
         else if (state === 'win') header.classList.add('header-win');
-        else header.classList.add('header-default');
+        else header.className = 'modal-header header-default';
 
         document.getElementById('end-msg').innerText = msg;
         const btn1 = document.getElementById('btn-action-1'); const btn2 = document.getElementById('btn-action-2');
@@ -760,7 +859,8 @@ const Game = {
         this.startTimer(15);
     },
     quit() {
-        AudioSys.click(); UI.closeModal(); document.getElementById('view-quiz').classList.add('hidden');
+        AudioSys.click(); AudioSys.stopAll();
+        UI.closeModal(); document.getElementById('view-quiz').classList.add('hidden');
         document.getElementById('ui-level').classList.add('hidden'); document.getElementById('view-home').classList.remove('hidden');
         clearInterval(this.timerInt); clearInterval(this.typeInt);
         
@@ -790,10 +890,14 @@ const Game = {
             if (item && !item.unlocked) { unlockedItem = item; break; }
         }
         
-        if (!unlockedItem) { alert("Subhanallah! Anda sudah mengoleksi semua hadiah."); UI.closeModal(); return; }
+        if (!unlockedItem) { 
+            UI.showToast("Subhanallah! Anda sudah mengoleksi semua hadiah."); 
+            UI.closeModal(); 
+            return; 
+        }
         
         this.tickets -= 1; this.init(); unlockedItem.unlocked = true; 
-        AudioSys.correct();
+        AudioSys.playSound('score'); // Suara benar untuk gacha
         
         UI.openModal('modal-collection'); 
         UI.switchTab(unlockedItem.cat);
@@ -802,6 +906,18 @@ const Game = {
 };
 
 const UI = {
+    toastTimeout: null,
+    showToast(msg) {
+        const toast = document.getElementById('ui-toast');
+        if (toast) {
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            clearTimeout(this.toastTimeout);
+            this.toastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2500);
+        }
+    },
     openModal(modalId) {
         try { AudioSys.click(); } catch(e) {}
         document.getElementById('modal-overlay').classList.remove('hidden');
@@ -826,11 +942,29 @@ const UI = {
         try { AudioSys.click(); } catch(e) {}
         document.querySelectorAll('.tab-btn').forEach((b, i) => { if(i === tabIndex) b.classList.add('active'); else b.classList.remove('active'); });
         const grid = document.getElementById('col-grid'); grid.innerHTML = '';
+        
         dbCollection.filter(i => i.cat === tabIndex).forEach(item => {
-            const div = document.createElement('div'); div.className = `col-item ${item.unlocked ? 'unlocked' : ''}`;
-            if (item.image) div.innerHTML = `<img src="${item.image}" class="col-img" alt="${item.name}">`;
-            else div.innerHTML = `<div class="col-icon">${item.icon}</div>`;
-            div.onclick = () => { if(item.unlocked) alert(item.name); else alert("Koleksi belum didapatkan."); }
+            const div = document.createElement('div'); 
+            div.className = `col-item ${item.unlocked ? 'unlocked' : ''}`;
+            
+            // Render Gambar dengan onerror Fallback ke Emoji jika gagal dimuat
+            div.innerHTML = `
+                <img src="${item.image}" class="col-img" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="col-icon" style="display:none; font-size:40px;">${item.icon}</div>
+            `;
+            
+            // Jika data awal tidak memiliki gambar, langsung tampilkan ikon emoji
+            if (!item.image) {
+                div.innerHTML = `<div class="col-icon" style="display:block; font-size:40px;">${item.icon}</div>`;
+            }
+            
+            div.onclick = () => { 
+                if (item.unlocked) {
+                    UI.showToast(item.name); 
+                } else {
+                    UI.showToast("Koleksi belum didapatkan."); 
+                } 
+            }
             grid.appendChild(div);
         });
     }
