@@ -37,8 +37,6 @@
 
         /* TOMBOL ATAS DI BERANDA (MUTE) */
         .btn-mute-home { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-dark); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--gold-light); font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 20; }
-        .btn-stop-home { background: linear-gradient(to bottom, #cb2d3e, #ef473a); border: 2px solid #fff; border-radius: 20px; padding: 8px 25px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.5); margin-bottom: 15px; transition: transform 0.1s; }
-        .btn-stop-home:active { transform: scale(0.95); }
 
         /* BERANDA */
         #view-home { flex: 1; justify-content: space-between; align-items: center; padding: 40px 20px 20px 20px; }
@@ -188,9 +186,6 @@
         </div>
 
         <div class="action-group">
-            <!-- TOMBOL BERHENTI -->
-            <button id="btn-stop" class="btn-stop-home hidden" onclick="Game.stopCompletely()">BERHENTI</button>
-            
             <div class="btn-play-container" id="ui-play-area">
                 <button class="btn-play" onclick="Game.start()">
                     <span style="color: #4CAF50;">▶</span> MAIN
@@ -518,23 +513,6 @@ const Game = {
         document.getElementById('ui-level').classList.remove('hidden');
         this.level = 1; 
         this.resetLevelState();
-    },
-    stopCompletely() {
-        AudioSys.stopAll();
-        AudioSys.isMuted = true;
-        const btnMute = document.getElementById('btn-mute');
-        if (btnMute) btnMute.innerText = "🔇";
-        
-        const playContainer = document.getElementById('ui-play-area');
-        if (playContainer) {
-            playContainer.innerHTML = `
-            <div style="background: rgba(0,0,0,0.8); border: 2px solid #ff3333; padding: 15px; border-radius: 15px; color: #fff; text-align: center; width: 90%; max-width: 300px; margin: 0 auto; box-shadow: 0 5px 15px rgba(255,0,0,0.4);">
-                <div style="font-size: 16px; color: #ff3333; margin-bottom: 8px; font-weight: bold;">🛑 PERMAINAN DIHENTIKAN</div>
-                <div style="font-size: 12px; margin-bottom: 15px; color: #ccc;">Terima kasih telah bermain.</div>
-                <button onclick="location.reload()" style="background: linear-gradient(to bottom, #11998e, #38ef7d); border: 2px solid #fff; border-radius: 20px; padding: 10px 25px; color: #fff; font-weight: bold; font-size: 14px; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.5);">MAIN KEMBALI</button>
-            </div>`;
-        }
-        document.getElementById('btn-stop').classList.add('hidden');
     },
     resetLevelState() {
         this.lifelineTimeUsed = false; this.lifeline5050Used = false; this.lifelineSwapUsed = false;
@@ -865,7 +843,7 @@ const Game = {
         clearInterval(this.timerInt); clearInterval(this.typeInt);
         
         this.hasPlayed = true;
-        document.getElementById('btn-stop').classList.remove('hidden'); // Munculkan tombol BERHENTI setelah main
+        // Fungsi memunculkan kembali tombol berhenti dihapus di baris ini
     },
     quitToCollection() {
         this.quit(); 
